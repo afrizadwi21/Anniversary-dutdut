@@ -1,0 +1,480 @@
+/* ================================================================
+   DYNAMIC ROMANTIC ATMOSPHERE — UNIFIED CINEMATIC BACKGROUND SYSTEM
+   Supports: 
+   1. Burgundy/Dark Romantic Theme (default)
+   2. Dreamy Sakura Pink Theme (data-theme="pink")
+   ================================================================ */
+
+:root {
+  /* Default Burgundy / Wine Red Colors */
+  --bg-body: #180410;
+  --bg-gradient: linear-gradient(160deg,
+      #180410 0%,
+      #28061c 15%,
+      #3a0928 30%,
+      #28061c 45%,
+      #500d37 60%,
+      #28061c 75%,
+      #350722 90%,
+      #180410 100%
+    );
+  --bg-radial: 
+    radial-gradient(ellipse 50% 35% at 20% 20%, rgba(219,77,131,0.20) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 30% at 80% 15%, rgba(189,47,101,0.16) 0%, transparent 50%),
+    radial-gradient(ellipse 55% 35% at 15% 80%, rgba(200,50,110,0.16) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 35% at 85% 85%, rgba(169,30,80,0.18) 0%, transparent 50%);
+  --bg-edge:
+    radial-gradient(ellipse 90% 35% at 50% 0%, rgba(244,114,182,0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 80% 30% at 50% 100%, rgba(200,50,110,0.16) 0%, transparent 65%);
+  --vignette-bg: radial-gradient(
+    ellipse 100% 100% at 50% 50%,
+    transparent 45%,
+    rgba(10,1,8,0.5) 100%
+  );
+  --footer-bg: rgba(15,2,10,0.95);
+  --footer-border: rgba(244,114,182,0.15);
+  
+  /* Glassmorphism settings */
+  --glass-bg: rgba(255,255,255,0.05);
+  --glass-border: rgba(244,114,182,0.25);
+  --glass-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 20px rgba(244,114,182,0.15), inset 0 1px 0 rgba(255,220,230,0.15);
+  
+  --msg-card-bg: rgba(255,255,255,0.055);
+  --msg-card-border: rgba(244,114,182,0.3);
+  --msg-card-shadow: 0 8px 60px rgba(0,0,0,0.45), 0 0 50px rgba(236,72,153,0.15), inset 0 1px 0 rgba(255,220,230,0.2);
+  
+  --reason-card-bg: rgba(255,255,255,0.045);
+  --reason-card-border: rgba(244,114,182,0.2);
+  --reason-card-shadow: 0 4px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,220,230,0.1);
+
+  /* Typography / Text Colors */
+  --hero-eyebrow-color: rgba(255,148,180,0.95);
+  --hero-title-line1-color: rgba(255,240,245,0.98);
+  --hero-title-line2-color: rgba(255,150,180,0.95);
+  --hero-sub-color: rgba(255,190,210,0.85);
+  --section-eyebrow-color: rgba(255,130,170,0.95);
+  --section-title-color: rgba(255,230,240,0.98);
+  --section-title-em-color: rgba(255,140,175,0.95);
+  --scroll-btn-color: rgba(255,150,180,0.8);
+  --msg-title-color: rgba(255,240,245,0.98);
+  --msg-body-color: rgba(255,200,215,0.85);
+  --reason-card-h3-color: rgba(255,230,240,0.98);
+  --reason-card-p-color: rgba(244,170,195,0.8);
+  --garden-note-color: rgba(255,160,190,0.7);
+  --gallery-caption-color: rgba(255,180,205,0.95);
+  --gallery-caption-bg: rgba(0,0,0,0.35);
+  --gallery-note-color: rgba(255,160,190,0.65);
+  
+  /* Scrollbar & Separators */
+  --scrollbar-track-bg: #180410;
+  --scrollbar-thumb-bg: rgba(236,72,153,0.5);
+  --separator-bg: linear-gradient(90deg, transparent, rgba(180,60,100,0.25), transparent);
+  
+  /* Modal Overlay */
+  --modal-overlay: rgba(24, 4, 16, 0.85);
+  --garden-bg-grad: linear-gradient(180deg, transparent, rgba(93,12,60,0.25) 30%, rgba(100,20,65,0.2) 70%, transparent);
+}
+
+[data-theme="pink"] {
+  /* Cute & Dreamy Sakura Pink Colors */
+  --bg-body: #ffeef2;
+  --bg-gradient: linear-gradient(160deg,
+      #ffeef2 0%,
+      #ffdcdb 15%,
+      #ffccd5 30%,
+      #ffdcdb 45%,
+      #ffaec9 60%,
+      #ffdcdb 75%,
+      #ffc2d1 90%,
+      #ffeef2 100%
+    );
+  --bg-radial: 
+    radial-gradient(ellipse 50% 35% at 20% 20%, rgba(255, 105, 180, 0.15) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 30% at 80% 15%, rgba(255, 182, 193, 0.22) 0%, transparent 50%),
+    radial-gradient(ellipse 55% 35% at 15% 80%, rgba(255, 182, 193, 0.20) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 35% at 85% 85%, rgba(255, 105, 180, 0.15) 0%, transparent 50%);
+  --bg-edge:
+    radial-gradient(ellipse 90% 35% at 50% 0%, rgba(255, 182, 193, 0.25) 0%, transparent 65%),
+    radial-gradient(ellipse 80% 30% at 50% 100%, rgba(255, 105, 180, 0.20) 0%, transparent 65%);
+  --vignette-bg: radial-gradient(
+    ellipse 100% 100% at 50% 50%,
+    transparent 55%,
+    rgba(255, 200, 215, 0.25) 100%
+  );
+  --footer-bg: rgba(255, 218, 226, 0.95);
+  --footer-border: rgba(255, 105, 180, 0.25);
+  
+  /* Glassmorphism settings - light & glowing */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 105, 180, 0.35);
+  --glass-shadow: 0 8px 32px rgba(255, 182, 193, 0.3), 0 0 15px rgba(255, 182, 193, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  
+  --msg-card-bg: rgba(255, 255, 255, 0.72);
+  --msg-card-border: rgba(255, 105, 180, 0.4);
+  --msg-card-shadow: 0 12px 50px rgba(255, 182, 193, 0.35), 0 0 35px rgba(255, 105, 180, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  
+  --reason-card-bg: rgba(255, 255, 255, 0.58);
+  --reason-card-border: rgba(255, 105, 180, 0.28);
+  --reason-card-shadow: 0 6px 24px rgba(255, 182, 193, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+
+  /* Typography / Text Colors - high contrast dark crimson/pink */
+  --hero-eyebrow-color: #d9406b;
+  --hero-title-line1-color: #4a0e17;
+  --hero-title-line2-color: #d9406b;
+  --hero-sub-color: #7c243c;
+  --section-eyebrow-color: #d9406b;
+  --section-title-color: #4a0e17;
+  --section-title-em-color: #d9406b;
+  --scroll-btn-color: #d9406b;
+  --msg-title-color: #4a0e17;
+  --msg-body-color: #5c1825;
+  --reason-card-h3-color: #4a0e17;
+  --reason-card-p-color: #7c243c;
+  --garden-note-color: #7c243c;
+  --gallery-caption-color: #ffe5ec;
+  --gallery-caption-bg: rgba(74, 14, 23, 0.8);
+  --gallery-note-color: #7c243c;
+  
+  /* Scrollbar & Separators */
+  --scrollbar-track-bg: #ffdcdb;
+  --scrollbar-thumb-bg: rgba(255, 105, 180, 0.75);
+  --separator-bg: linear-gradient(90deg, transparent, rgba(255, 105, 180, 0.4), transparent);
+  
+  /* Modal Overlay */
+  --modal-overlay: rgba(255, 238, 242, 0.88);
+  --garden-bg-grad: linear-gradient(180deg, transparent, rgba(255, 174, 201, 0.25) 30%, rgba(255, 194, 209, 0.2) 70%, transparent);
+}
+
+/* ================================================================
+   GLOBAL FIXED BACKGROUND SYSTEM
+   ================================================================ */
+
+html, body {
+  background: var(--bg-body) !important;
+  color: var(--text-light) !important;
+  min-height: 100%;
+  transition: background 0.5s ease;
+}
+
+#global-bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  background: var(--bg-gradient);
+  pointer-events: none;
+  transition: background 0.5s ease;
+}
+
+/* Slow-breathing ambient light radials */
+#global-bg-layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bg-radial);
+  pointer-events: none;
+  animation: bg-breathe 12s ease-in-out infinite alternate;
+}
+
+/* Top/bottom cinematic glow edge lights */
+#global-bg-layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bg-edge);
+  pointer-events: none;
+}
+
+@keyframes bg-breathe {
+  0%   { opacity: 0.7; }
+  100% { opacity: 1.0; }
+}
+
+/* ================================================================
+   MAIN SITE
+   ================================================================ */
+#main-site {
+  background: transparent !important;
+  position: relative;
+}
+
+#main-site::before {
+  display: none !important;
+}
+
+#main-site::after {
+  display: none !important;
+}
+
+/* ================================================================
+   ALL SECTIONS
+   ================================================================ */
+section,
+#hero,
+#message,
+#reasons,
+#garden,
+#memories {
+  background: transparent !important;
+}
+
+.garden-bg {
+  background: var(--garden-bg-grad) !important;
+  transition: background 0.5s ease;
+}
+
+#finale {
+  background: transparent !important;
+}
+
+footer {
+  background: var(--footer-bg) !important;
+  border-top: 1px solid var(--footer-border);
+  transition: background 0.5s ease, border-color 0.5s ease;
+}
+
+/* ================================================================
+   CINEMATIC VIGNETTE
+   ================================================================ */
+.cinematic-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background: var(--vignette-bg);
+  transition: background 0.5s ease;
+}
+
+/* ================================================================
+   TEXT COLOR OVERRIDES
+   ================================================================ */
+.hero-eyebrow       { color: var(--hero-eyebrow-color) !important; }
+.hero-title .line1  { color: var(--hero-title-line1-color) !important; }
+.hero-title .line2  { color: var(--hero-title-line2-color) !important; }
+.hero-sub           { color: var(--hero-sub-color) !important; }
+.section-eyebrow    { color: var(--section-eyebrow-color) !important; }
+.section-title      { color: var(--section-title-color) !important; }
+.section-title em   { color: var(--section-title-em-color) !important; }
+.scroll-btn         { color: var(--scroll-btn-color) !important; }
+
+.msg-title  { color: var(--msg-title-color) !important; }
+.msg-body   { color: var(--msg-body-color) !important; }
+
+.reason-card h3  { color: var(--reason-card-h3-color) !important; }
+.reason-card p   { color: var(--reason-card-p-color) !important; }
+
+.section-title.garden-title { color: var(--section-title-color) !important; }
+.garden-note                { color: var(--garden-note-color) !important; }
+
+.gallery-caption  { color: var(--gallery-caption-color) !important; background: var(--gallery-caption-bg) !important; }
+.gallery-note     { color: var(--gallery-note-color) !important; }
+
+/* ================================================================
+   GLASSMORPHISM APPLIED
+   ================================================================ */
+.glass {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-border) !important;
+  box-shadow: var(--glass-shadow) !important;
+  transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.message-card {
+  background: var(--msg-card-bg) !important;
+  border-color: var(--msg-card-border) !important;
+  box-shadow: var(--msg-card-shadow) !important;
+  transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.reason-card {
+  background: var(--reason-card-bg) !important;
+  border-color: var(--reason-card-border) !important;
+  box-shadow: var(--reason-card-shadow) !important;
+  transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* ================================================================
+   SCROLLBAR
+   ================================================================ */
+::-webkit-scrollbar-track { background: var(--scrollbar-track-bg) !important; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb-bg) !important; }
+
+/* ================================================================
+   SECTION BLEND SEPARATORS
+   ================================================================ */
+section + section::before {
+  content: '';
+  display: block;
+  width: 180px;
+  height: 1px;
+  margin: 0 auto -60px;
+  background: var(--separator-bg);
+}
+
+/* ================================================================
+   GLOBAL AMBIENT CONTINUITY
+   ================================================================ */
+#particle-canvas,
+#floral-canvas,
+#falling-petals {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+#main-site section,
+#main-site footer {
+  position: relative !important;
+  z-index: 15 !important;
+}
+
+#message::after,
+#reasons::after,
+#garden::after,
+#memories::after,
+#finale::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 100% 40% at 50% 100%, rgba(80,15,40,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.section-inner,
+.message-card,
+.reasons-grid,
+.flower-garden,
+.gallery-grid,
+.finale-inner {
+  position: relative;
+  z-index: 2;
+}
+
+/* ================================================================
+   THEME ADJUSTMENTS FOR SPECIFIC DYNAMIC COMPONENTS
+   ================================================================ */
+[data-theme="pink"] .glass h3 {
+  color: var(--reason-card-h3-color) !important;
+}
+
+[data-theme="pink"] .glass p,
+[data-theme="pink"] .glass span:not(.animate-pulse):not(.text-2xl):not(.text-3xl):not(.text-5xl) {
+  color: var(--reason-card-p-color) !important;
+}
+
+[data-theme="pink"] .glass span.text-\[\#fff8f3\],
+[data-theme="pink"] .glass h3.text-\[\#fff8f3\] {
+  color: var(--reason-card-h3-color) !important;
+}
+
+[data-theme="pink"] .glass span.text-\[\#ffc8dc\]\/70,
+[data-theme="pink"] .glass span.text-\[\#ffc8dc\]\/75,
+[data-theme="pink"] .glass span.text-\[\#ffc8dc\]\/80 {
+  color: var(--reason-card-p-color) !important;
+}
+
+[data-theme="pink"] .glass {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+[data-theme="pink"] .absolute.top-4.right-4.text-white\/50 {
+  color: var(--reason-card-p-color) !important;
+  background-color: rgba(255, 105, 180, 0.1) !important;
+}
+
+[data-theme="pink"] .absolute.top-4.right-4.text-white\/50:hover {
+  color: var(--reason-card-h3-color) !important;
+  background-color: rgba(255, 105, 180, 0.2) !important;
+}
+
+/* Music Player specific overrides */
+[data-theme="pink"] .fixed.bottom-6.left-6.w-\[320px\].glass span.text-white {
+  color: var(--reason-card-h3-color) !important;
+}
+
+[data-theme="pink"] .fixed.bottom-6.left-6.w-\[320px\].glass button {
+  background-color: rgba(255, 105, 180, 0.1) !important;
+  color: var(--reason-card-h3-color) !important;
+}
+
+[data-theme="pink"] .fixed.bottom-6.left-6.w-\[320px\].glass button:hover {
+  background-color: rgba(255, 105, 180, 0.2) !important;
+}
+
+[data-theme="pink"] .fixed.bottom-6.left-6.w-\[320px\].glass span.text-white\/80 {
+  color: var(--reason-card-p-color) !important;
+}
+
+/* ================================================================
+   COMPREHENSIVE TAILWIND UTILITY OVERRIDES FOR PINK THEME
+   ================================================================ */
+
+/* Text Colors */
+[data-theme="pink"] .text-\[\#ffc8dc\]\/70,
+[data-theme="pink"] .text-\[\#ffc8dc\]\/75,
+[data-theme="pink"] .text-\[\#ffc8dc\]\/85,
+[data-theme="pink"] .text-\[\#ffc8dc\]\/90,
+[data-theme="pink"] .text-\[\#ffc8dc\] {
+  color: var(--reason-card-p-color) !important;
+}
+
+[data-theme="pink"] .text-\[\#ff96b4\],
+[data-theme="pink"] .text-\[\#ff96b4\]\/75,
+[data-theme="pink"] .text-\[\#ff96b4\]\/80 {
+  color: var(--reason-card-h3-color) !important;
+}
+
+[data-theme="pink"] .text-\[\#fff8f3\] {
+  color: var(--reason-card-h3-color) !important;
+}
+
+/* Border Colors (Planet Orbits & Cards) */
+[data-theme="pink"] .border-\[\#ff96b4\]\/10 {
+  border-color: rgba(217, 64, 107, 0.3) !important;
+}
+[data-theme="pink"] .border-\[\#ff96b4\]\/15 {
+  border-color: rgba(217, 64, 107, 0.4) !important;
+}
+[data-theme="pink"] .border-\[\#ff96b4\]\/30 {
+  border-color: rgba(217, 64, 107, 0.5) !important;
+}
+[data-theme="pink"] .border-\[\#ff96b4\]\/40 {
+  border-color: rgba(217, 64, 107, 0.6) !important;
+}
+[data-theme="pink"] .border-\[\#ff96b4\] {
+  border-color: rgba(217, 64, 107, 0.8) !important;
+}
+
+/* Modal text overrides specifically for LoveLoomOrbit */
+[data-theme="pink"] .glass h4,
+[data-theme="pink"] .glass span.uppercase {
+  color: var(--reason-card-h3-color) !important;
+}
+
+/* Finale Section and Generic White Text Overrides */
+[data-theme="pink"] .finale-eyebrow {
+  color: var(--reason-card-h3-color) !important;
+}
+[data-theme="pink"] .finale-title {
+  color: var(--reason-card-h3-color) !important;
+}
+[data-theme="pink"] .finale-title em {
+  color: #d9406b !important;
+}
+[data-theme="pink"] .finale-body {
+  color: var(--reason-card-p-color) !important;
+}
+[data-theme="pink"] .finale-sig {
+  color: #d9406b !important;
+}
+
+[data-theme="pink"] .text-white {
+  color: var(--reason-card-h3-color) !important;
+}
+[data-theme="pink"] .text-white\/80,
+[data-theme="pink"] .text-white\/75,
+[data-theme="pink"] .text-white\/70,
+[data-theme="pink"] .text-white\/50 {
+  color: var(--reason-card-p-color) !important;
+}
