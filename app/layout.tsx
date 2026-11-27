@@ -24,6 +24,9 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "buat dutdut",
   description: "Untuk Dutdut — catatan kecil, semesta kita, dan lagu yang selalu menemani.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
