@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
   <defs>
     <radialGradient id="g4" cx="30%" cy="70%" r="80%">
-      <stop offset="0%" stop-color="#223042"/>
-      <stop offset="60%" stop-color="#111824"/>
-      <stop offset="100%" stop-color="#090d14"/>
+      <stop offset="0%" stop-color="#27272c"/>
+      <stop offset="60%" stop-color="#141417"/>
+      <stop offset="100%" stop-color="#09090b"/>
     </radialGradient>
   </defs>
   <rect width="600" height="600" fill="url(#g4)"/>
-  <path d="M120 350 Q300 170 480 350" fill="none" stroke="#e2a856" stroke-opacity="0.45" stroke-width="1.5"/>
-  <circle cx="220" cy="270" r="44" fill="#182233" stroke="#9aa6b8" stroke-opacity="0.45"/>
-  <circle cx="375" cy="255" r="56" fill="#182233" stroke="#e2a856" stroke-opacity="0.6"/>
-  <text x="300" y="505" text-anchor="middle" fill="#f3efe7" font-family="Georgia, serif" font-size="22" letter-spacing="2">04 / TOGETHER</text>
-  <text x="300" y="535" text-anchor="middle" fill="#9aa6b8" font-family="monospace" font-size="12" letter-spacing="3">DUMMY PHOTO — REPLACE LATER</text>
+  <path d="M120 350 Q300 170 480 350" fill="none" stroke="#fafafa" stroke-opacity="0.35" stroke-width="1.5"/>
+  <circle cx="220" cy="270" r="44" fill="#1c1c21" stroke="#a1a1aa" stroke-opacity="0.45"/>
+  <circle cx="375" cy="255" r="56" fill="#1c1c21" stroke="#fafafa" stroke-opacity="0.55"/>
+  <text x="300" y="505" text-anchor="middle" fill="#fafafa" font-family="Georgia, serif" font-size="22" letter-spacing="2">04 / TOGETHER</text>
+  <text x="300" y="535" text-anchor="middle" fill="#a1a1aa" font-family="monospace" font-size="12" letter-spacing="3">MONOCHROME PLACEHOLDER</text>
 </svg>

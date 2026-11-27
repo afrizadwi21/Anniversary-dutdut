@@ -26,8 +26,6 @@ export default function CountdownTimer() {
     const calculateTimeLeft = (): TimeLeft => {
       const now = new Date();
       const currentYear = now.getFullYear();
-
-      // Target: June 9th
       let targetDate = new Date(currentYear, 5, 9, 0, 0, 0);
 
       if (now.getMonth() === 5 && now.getDate() === 9) {
@@ -59,16 +57,16 @@ export default function CountdownTimer() {
 
   return (
     <div className="my-8 flex flex-col items-center justify-center w-full max-w-xl mx-auto">
-      <p className="text-center font-mono text-xs uppercase tracking-[0.18em] text-[#e2a856] mb-4">
+      <p className="text-center font-mono text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] mb-4">
         {timeLeft.isSpecialDay ? "Hari Istimewa Kita — 9 Juni" : "Menuju 9 Juni Berikutnya"}
       </p>
 
       {timeLeft.isSpecialDay ? (
-        <div className="observatory-surface px-8 py-6 text-center w-full">
-          <h3 className="font-display italic text-2xl md:text-3xl text-[#f3efe7] leading-relaxed">
+        <div className="mono-surface px-8 py-6 text-center w-full">
+          <h3 className="font-display italic text-2xl md:text-3xl text-[var(--text-primary)] leading-relaxed">
             Hari Ini Milik Kita, Dutdut
           </h3>
-          <p className="font-body text-[#9aa6b8] text-sm mt-2">
+          <p className="font-body text-[var(--text-muted)] text-sm mt-2">
             Terima kasih sudah terus melangkah bersama sampai hari ini.
           </p>
         </div>
@@ -82,12 +80,12 @@ export default function CountdownTimer() {
           ].map((item, index) => (
             <div
               key={index}
-              className="observatory-surface flex flex-col items-center justify-center py-4 md:py-5"
+              className="mono-surface flex flex-col items-center justify-center py-4 md:py-5"
             >
-              <span className="font-mono text-2xl md:text-4xl font-medium text-[#f3efe7] tabular-nums">
+              <span className="font-mono text-2xl md:text-4xl font-medium text-[var(--text-primary)] tabular-nums">
                 {String(item.value).padStart(2, "0")}
               </span>
-              <span className="font-mono text-xs uppercase tracking-[0.14em] text-[#9aa6b8] mt-1.5">
+              <span className="font-mono text-xs uppercase tracking-[0.14em] text-[var(--text-muted)] mt-1.5">
                 {item.label}
               </span>
             </div>

@@ -1,17 +1,19 @@
 ---
 name: buat dutdut
-description: Nocturne Observatory design system pairing Baskervville editorial serif, Manrope sans, and JetBrains Mono on obsidian slate with warm amber gold accents.
+description: Editorial Monochrome Light & Dark design system pairing Baskervville serif, Manrope sans, and JetBrains Mono in pure grayscale with bidirectional scroll choreography.
 colors:
-  obsidian-bg: "#090d14"
-  void-shadow: "#04060b"
-  slate-surface: "#111824"
-  slate-elevated: "#182233"
-  parchment-ink: "#f3efe7"
-  silver-muted: "#9aa6b8"
-  amber-accent: "#e2a856"
-  amber-bright: "#f5cd82"
-  amber-deep: "#8a5514"
-  border-hairline: "#243044"
+  mono-black: "#09090b"
+  mono-charcoal: "#141417"
+  mono-slate: "#1c1c21"
+  mono-border-dark: "#27272c"
+  mono-muted-dark: "#a1a1aa"
+  mono-silver-light: "#d4d4d8"
+  mono-zinc-mid: "#71717a"
+  mono-white: "#fafafa"
+  mono-paper: "#ffffff"
+  mono-surface-light: "#f4f4f5"
+  mono-border-light: "#e4e4e7"
+  mono-muted-light: "#52525b"
 typography:
   display:
     fontFamily: "Baskervville, Georgia, serif"
@@ -57,46 +59,44 @@ spacing:
   section: "96px"
 components:
   button-pill:
-    backgroundColor: "{colors.slate-elevated}"
-    textColor: "{colors.parchment-ink}"
+    backgroundColor: "{colors.mono-slate}"
+    textColor: "{colors.mono-white}"
     rounded: "{rounded.full}"
     padding: "10px 20px"
   card-surface:
-    backgroundColor: "{colors.slate-surface}"
-    textColor: "{colors.parchment-ink}"
+    backgroundColor: "{colors.mono-charcoal}"
+    textColor: "{colors.mono-white}"
     rounded: "{rounded.lg}"
     padding: "28px"
 ---
 
-# Design System: buat dutdut
+# Design System: buat dutdut (Monochrome)
 
 ## Overview
 
-**Creative North Star: "The Nocturne Observatory"**
+**Creative North Star: "Silver Gelatin Gallery"**
 
-**buat dutdut** replaces the previous pink floral theme with a calm, nocturnal celestial aesthetic. Deep obsidian slate grounds (`#090d14`) frame warm parchment typography (`#f3efe7`) and a single warm amber-gold accent (`#e2a856`) inspired by starlight and brass observatory instruments.
+**buat dutdut** uses a pure achromatic monochrome palette across both **Dark** (`#09090b`) and **Light** (`#fafafa`) modes. Inspired by silver-gelatin darkroom prints and architectural monographs, hierarchy comes strictly from typographic scale, hairline borders, and tonal contrast—never chromatic accents.
 
 **Key Characteristics:**
-- Zero pink hues, zero emojis, zero generic glassmorphism cards.
-- Editorial `Baskervville` serif display voice paired with `Manrope` body text and `JetBrains Mono` for orbital coordinates, dates, and timers.
-- Realistic 3D orbital planetarium with perspective depth sorting, spherical terminator shading, atmospheric rim lighting, and interactive tilt.
-- Restrained tonal layering (`#111824` over `#090d14`) with crisp `1px` hairline borders (`#243044`).
+- 100% monochrome grayscale across Dark and Light themes (`data-theme="dark" | "light"`).
+- Bidirectional scroll choreography: sections and cards glide into focus smoothly on both scroll-down and scroll-up, paired with a hairline top scroll-progress indicator.
+- Realistic 3D monochrome planetary orbit with dynamic terminator lighting, perspective depth sorting, and drag-to-tilt.
+- Zero emojis, zero chromatic accents, crisp inline SVGs.
 
 ## Colors
 
 ### Primary
-- **Amber Accent** (`#e2a856`): Primary interactive accent, active borders, orbital highlights, and focus rings.
-- **Amber Bright** (`#f5cd82`): Specular starlight highlight and hover state accent.
+- **Pure Ink / Highlight**: `#fafafa` in Dark mode, `#09090b` in Light mode. Used for primary headings, active controls, and primary CTA fills.
 
 ### Neutral
-- **Obsidian Background** (`#090d14`): Primary page canvas.
-- **Slate Surface** (`#111824`): Tonal card and panel surface.
-- **Slate Elevated** (`#182233`): Interactive control and modal surface.
-- **Parchment Ink** (`#f3efe7`): Primary headings and high-emphasis body copy.
-- **Silver Muted** (`#9aa6b8`): Secondary copy, descriptions, and metadata.
-- **Border Hairline** (`#243044`): Subtle `1px` dividers and card outlines.
+- **Canvas**: `#09090b` (Dark) / `#fafafa` (Light).
+- **Surface**: `#141417` (Dark) / `#ffffff` (Light).
+- **Elevated**: `#1c1c21` (Dark) / `#f4f4f5` (Light).
+- **Muted Ink**: `#a1a1aa` (Dark) / `#52525b` (Light).
+- **Hairline Border**: `#27272c` (Dark) / `#e4e4e7` (Light).
 
-**The Single-Accent Discipline Rule.** Amber Gold (`#e2a856`) is the sole accent color across the entire experience. Never introduce pink, rose, purple, or neon hues.
+**The Achromatic Rule.** Zero chromatic colors (no pink, no gold, no blue). Contrast and emphasis rely solely on lightness, weight, and spacing.
 
 ## Typography
 
@@ -104,38 +104,7 @@ components:
 **Body Font:** `Manrope` (fallback: `system-ui, sans-serif`)
 **Mono Font:** `JetBrains Mono` (fallback: `monospace`)
 
-### Hierarchy
-- **Display** (`400`, `clamp(2.75rem, 6.5vw, 5rem)`, `1.05`): Hero headline (`buat dutdut`).
-- **Headline** (`400`, `clamp(2rem, 4vw, 3rem)`, `1.15`): Section titles.
-- **Title** (`400`, `1.375rem`, `1.3`): Timeline and modal titles.
-- **Body** (`400`, `1rem`, `1.75`): Narrative copy constrained to `65ch`.
-- **Label** (`500`, `0.75rem`, `0.14em` tracking, uppercase): Dates, countdown units, and audio timestamps.
+## Layout & Motion
 
-## Layout
-
-- Direct entry into `<main>` with vertical section rhythm (`py-20 md:py-28`) and centered `max-w-5xl` containers.
-- Asymmetric editorial reading column for the letter (`max-w-2xl`), 2-column numbered list for cherished qualities, alternating spine for milestones, and responsive 2–4 column photo gallery.
-
-## Elevation & Depth
-
-- Tonal layering (`#111824` on `#090d14`) with `1px` hairline borders (`#243044`) and subtle offset shadows (`0 12px 36px rgba(0, 0, 0, 0.35)`).
-
-## Shapes
-
-- Cards: `18px` (`rounded-[18px]`); media frames: `12px`; controls: `9999px` pill.
-
-## Components
-
-- **3D Planetarium (`LoveLoomOrbit`):** Real-time 3D perspective projection (`x, y, z` rotation + tilt), `z`-depth sorting around the central star, spherical shading + atmospheric rim on each planet, and accessible modal.
-- **Music Player (`MusicPlayer`):** Compact floating control bar with SVG icons, Web Audio bar visualizer, and accessible seek/volume sliders.
-
-## Do's and Don'ts
-
-### Do:
-- **Do** use the obsidian/slate/amber tokens consistently.
-- **Do** use crisp inline SVGs (`1.5px` stroke) for all UI controls.
-- **Do** respect `prefers-reduced-motion: reduce`.
-
-### Don't:
-- **Don't** use any pink/rose colors or Unicode emojis anywhere.
-- **Don't** add a blocking intro screen or bounce/elastic easing.
+- Bidirectional scroll-reveal transitions (`cubic-bezier(0.16, 1, 0.3, 1)`) triggered smoothly on both scroll-down and scroll-up, plus a 2px scroll-progress hairline at the top of the viewport.
+- Full `prefers-reduced-motion: reduce` support.

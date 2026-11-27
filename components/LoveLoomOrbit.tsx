@@ -14,7 +14,6 @@ interface OrbitPlanet {
   initialAngle: number;
   inclination: number;
   hasRing?: boolean;
-  atmosphereColor: string;
 }
 
 const ORBIT_PLANETS: OrbitPlanet[] = [
@@ -29,7 +28,6 @@ const ORBIT_PLANETS: OrbitPlanet[] = [
     speed: 0.34,
     initialAngle: 0.4,
     inclination: 0.08,
-    atmosphereColor: "rgba(226, 168, 86, 0.55)",
   },
   {
     id: 2,
@@ -43,7 +41,6 @@ const ORBIT_PLANETS: OrbitPlanet[] = [
     initialAngle: 2.1,
     inclination: -0.06,
     hasRing: true,
-    atmosphereColor: "rgba(245, 205, 130, 0.5)",
   },
   {
     id: 3,
@@ -56,7 +53,6 @@ const ORBIT_PLANETS: OrbitPlanet[] = [
     speed: 0.17,
     initialAngle: 3.9,
     inclination: 0.05,
-    atmosphereColor: "rgba(154, 166, 184, 0.48)",
   },
   {
     id: 4,
@@ -70,7 +66,6 @@ const ORBIT_PLANETS: OrbitPlanet[] = [
     initialAngle: 5.2,
     inclination: -0.04,
     hasRing: true,
-    atmosphereColor: "rgba(226, 168, 86, 0.6)",
   },
 ];
 
@@ -80,12 +75,11 @@ interface ProjectedPlanet {
   screenY: number;
   z: number;
   scale: number;
-  lightAngleDeg: number;
   shadowOffsetX: number;
   shadowOffsetY: number;
 }
 
-export default function LoveLoomOrbit() {
+export default function LoveLoomOrbit({ theme = "dark" }: { theme?: "dark" | "light" }) {
   const [selectedPlanet, setSelectedPlanet] = useState<OrbitPlanet | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [tiltDeg, setTiltDeg] = useState(24);
@@ -104,7 +98,8 @@ export default function LoveLoomOrbit() {
     startTilt: 24,
   });
 
-  // Responsive stage sizing
+  const isLight = theme === "light";
+
   useEffect(() => {
     const updateSize = () => {
       const w = window.innerWidth;
@@ -117,7 +112,6 @@ export default function LoveLoomOrbit() {
     return () => window.removeEventListener("resize", updateSize);
   }, []);
 
-  // Escape key closes modal
   useEffect(() => {
     if (!selectedPlanet) return;
     const onKey = (e: KeyboardEvent) => {
@@ -127,7 +121,6 @@ export default function LoveLoomOrbit() {
     return () => window.removeEventListener("keydown", onKey);
   }, [selectedPlanet]);
 
-  // Orbital animation loop (respects reduced motion)
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced || isPaused) return;
@@ -146,7 +139,7 @@ export default function LoveLoomOrbit() {
     return () => cancelAnimationFrame(rafId);
   }, [isPaused]);
 
-  // 3D Starfield + Orbital Ellipses Canvas
+  // Monochrome 3D Starfield + Tilted Orbital Ellipses
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -169,19 +162,21 @@ export default function LoveLoomOrbit() {
 
     ctx.clearRect(0, 0, stageSize, height);
 
-    // Subtle deterministic stars
+    // Deterministic monochrome stars / dust
     for (let i = 0; i < 65; i++) {
       const sx = ((Math.sin(i * 127.1) * 43758.5453) % 1 + 1) % 1;
       const sy = ((Math.sin(i * 311.7) * 24634.6345) % 1 + 1) % 1;
-      const alpha = 0.12 + (i % 5) * 0.08;
-      const r = i % 7 === 0 ? 1.4 : 0.85;
+      const alpha = 0.1 + (i % 5) * 0.07;
+      const r = i % 7 === 0 ? 1.3 : 0.8;
       ctx.beginPath();
       ctx.arc(sx * stageSize, sy * height, r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(243, 239, 231, ${alpha})`;
+      ctx.fillStyle = isLight
+        ? `rgba(9, 9, 11, ${alpha * 0.75})`
+        : `rgba(250, 250, 250, ${alpha})`;
       ctx.fill();
     }
 
-    // Draw 3D tilted orbital rings
+    // 3D tilted orbital rings
     ORBIT_PLANETS.forEach((planet) => {
       const rOrbit = planet.orbitRadius * scaleFactor;
       const steps = 96;
@@ -193,34 +188,35 @@ export default function LoveLoomOrbit() {
         const x1 = Math.cos(a1) * rOrbit;
         const z1Raw = Math.sin(a1) * rOrbit;
         const y1Raw = Math.sin(a1) * rOrbit * planet.inclination;
-
         const y1 = y1Raw * Math.cos(tiltRad) - z1Raw * Math.sin(tiltRad);
         const z1 = y1Raw * Math.sin(tiltRad) + z1Raw * Math.cos(tiltRad);
 
         const x2 = Math.cos(a2) * rOrbit;
         const z2Raw = Math.sin(a2) * rOrbit;
         const y2Raw = Math.sin(a2) * rOrbit * planet.inclination;
-
         const y2 = y2Raw * Math.cos(tiltRad) - z2Raw * Math.sin(tiltRad);
         const z2 = y2Raw * Math.sin(tiltRad) + z2Raw * Math.cos(tiltRad);
 
         const p1 = fov / (fov + z1);
         const p2 = fov / (fov + z2);
-
         const isFront = (z1 + z2) / 2 < 0;
+
         ctx.beginPath();
         ctx.moveTo(cx + x1 * p1, cy + y1 * p1);
         ctx.lineTo(cx + x2 * p2, cy + y2 * p2);
-        ctx.strokeStyle = isFront
-          ? "rgba(226, 168, 86, 0.28)"
-          : "rgba(154, 166, 184, 0.12)";
+        ctx.strokeStyle = isLight
+          ? isFront
+            ? "rgba(9, 9, 11, 0.28)"
+            : "rgba(9, 9, 11, 0.1)"
+          : isFront
+            ? "rgba(250, 250, 250, 0.28)"
+            : "rgba(161, 161, 170, 0.12)";
         ctx.lineWidth = isFront ? 1.15 : 0.75;
         ctx.stroke();
       }
     });
-  }, [stageSize, tiltDeg]);
+  }, [stageSize, tiltDeg, isLight]);
 
-  // Compute 3D planet projections
   const stageHeight = Math.round(stageSize * 0.72);
   const scaleFactor = stageSize / 640;
   const fov = 720;
@@ -241,8 +237,6 @@ export default function LoveLoomOrbit() {
     const screenX = stageSize / 2 + x * perspective;
     const screenY = stageHeight / 2 + y * perspective;
 
-    // Light direction from central sun (0, 0, 0) toward planet (x, y, z)
-    const lightAngleDeg = (Math.atan2(-y, -x) * 180) / Math.PI;
     const norm = Math.hypot(x, y, z) || 1;
     const shadowOffsetX = (x / norm) * 38;
     const shadowOffsetY = (y / norm) * 38;
@@ -253,13 +247,11 @@ export default function LoveLoomOrbit() {
       screenY,
       z,
       scale: perspective,
-      lightAngleDeg,
       shadowOffsetX,
       shadowOffsetY,
     };
   });
 
-  // Pointer drag-to-tilt handlers
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest("button")) return;
     dragRef.current = {
@@ -284,11 +276,11 @@ export default function LoveLoomOrbit() {
     dragRef.current.active = false;
   };
 
-  const sunSize = Math.round(76 * scaleFactor + 18);
+  const sunSize = Math.round(74 * scaleFactor + 18);
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-6 flex flex-col items-center">
-      <p className="text-center font-body text-sm text-[#9aa6b8] max-w-lg mx-auto mb-6 leading-relaxed">
+      <p className="text-center font-body text-sm text-[var(--text-muted)] max-w-lg mx-auto mb-6 leading-relaxed">
         Geser bidang orbit untuk memiringkan sudut pandang 3D, atau pilih salah satu planet untuk membuka catatan di dalamnya.
       </p>
 
@@ -297,11 +289,11 @@ export default function LoveLoomOrbit() {
         <button
           type="button"
           onClick={() => setIsPaused((p) => !p)}
-          className="px-3.5 py-1.5 rounded-full border border-[#243044] bg-[#111824] text-xs font-mono tracking-wider text-[#f3efe7] hover:border-[#e2a856] transition-colors cursor-pointer"
+          className="px-3.5 py-1.5 rounded-full border border-[var(--border-hairline)] bg-[var(--bg-surface)] text-xs font-mono tracking-wider text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-colors cursor-pointer"
         >
           {isPaused ? "RESUME ORBIT" : "PAUSE ORBIT"}
         </button>
-        <span className="text-xs font-mono text-[#9aa6b8]">
+        <span className="text-xs font-mono text-[var(--text-muted)]">
           TILT {Math.round(tiltDeg)}°
         </span>
       </div>
@@ -313,12 +305,18 @@ export default function LoveLoomOrbit() {
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        style={{ width: stageSize, height: stageHeight }}
-        className="relative select-none touch-none cursor-grab active:cursor-grabbing rounded-[18px] border border-[#243044] bg-[radial-gradient(circle_at_50%_50%,#141d2e_0%,#090d14_75%)] overflow-hidden shadow-[0_24px_64px_rgba(0,0,0,0.55)]"
+        style={{
+          width: stageSize,
+          height: stageHeight,
+          background: isLight
+            ? "radial-gradient(circle at 50% 50%, #ffffff 0%, #f4f4f5 75%)"
+            : "radial-gradient(circle at 50% 50%, #1c1c21 0%, #09090b 75%)",
+        }}
+        className="relative select-none touch-none cursor-grab active:cursor-grabbing rounded-[18px] border border-[var(--border-hairline)] overflow-hidden shadow-[var(--shadow-card)] transition-colors duration-300"
       >
         <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
 
-        {/* Central Star (z = 0) */}
+        {/* Central Star (Monochrome Eclipse / Silver Core) */}
         <div
           aria-hidden="true"
           style={{
@@ -331,18 +329,23 @@ export default function LoveLoomOrbit() {
           }}
           className="absolute rounded-full pointer-events-none"
         >
-          {/* Outer corona */}
           <div
-            className="absolute -inset-6 rounded-full opacity-60 blur-xl"
+            className="absolute -inset-6 rounded-full opacity-55 blur-xl"
             style={{
-              background: "radial-gradient(circle, rgba(245,205,130,0.55) 0%, rgba(226,168,86,0.12) 55%, transparent 75%)",
+              background: isLight
+                ? "radial-gradient(circle, rgba(9,9,11,0.2) 0%, transparent 70%)"
+                : "radial-gradient(circle, rgba(250,250,250,0.35) 0%, transparent 72%)",
             }}
           />
-          {/* Photosphere */}
           <div
-            className="relative w-full h-full rounded-full shadow-[0_0_45px_rgba(226,168,86,0.65)]"
+            className="relative w-full h-full rounded-full"
             style={{
-              background: "radial-gradient(circle at 38% 35%, #fff6dc 0%, #f5cd82 35%, #e2a856 72%, #8a5514 100%)",
+              background: isLight
+                ? "radial-gradient(circle at 38% 35%, #52525b 0%, #18181b 55%, #09090b 100%)"
+                : "radial-gradient(circle at 38% 35%, #ffffff 0%, #d4d4d8 42%, #71717a 82%, #27272a 100%)",
+              boxShadow: isLight
+                ? "0 8px 28px rgba(9, 9, 11, 0.28)"
+                : "0 0 42px rgba(250, 250, 250, 0.35)",
             }}
           />
         </div>
@@ -372,18 +375,18 @@ export default function LoveLoomOrbit() {
                 opacity: isBehind ? 0.78 : 1,
                 filter: isBehind ? "brightness(0.84)" : "brightness(1)",
               }}
-              className="absolute rounded-full p-0 border-0 bg-transparent cursor-pointer group focus-visible:outline-2 focus-visible:outline-[#e2a856] transition-[opacity,filter] duration-150"
+              className="absolute rounded-full p-0 border-0 bg-transparent cursor-pointer group transition-[opacity,filter] duration-150"
             >
-              {/* Planetary Ring (for ringed planets) */}
+              {/* Planetary Ring */}
               {planet.hasRing && (
                 <span
                   aria-hidden="true"
-                  className="absolute left-1/2 top-1/2 pointer-events-none rounded-full border border-[#e2a856]/45"
+                  className="absolute left-1/2 top-1/2 pointer-events-none rounded-full border"
                   style={{
                     width: diameter * 1.65,
                     height: diameter * 0.48,
                     transform: "translate(-50%, -50%) rotate(-18deg)",
-                    boxShadow: "0 0 8px rgba(226, 168, 86, 0.2)",
+                    borderColor: isLight ? "rgba(9, 9, 11, 0.35)" : "rgba(250, 250, 250, 0.4)",
                   }}
                 />
               )}
@@ -392,7 +395,9 @@ export default function LoveLoomOrbit() {
               <span
                 className="relative block w-full h-full rounded-full overflow-hidden"
                 style={{
-                  boxShadow: `0 0 18px ${planet.atmosphereColor}, inset 0 0 10px rgba(0,0,0,0.65)`,
+                  boxShadow: isLight
+                    ? "0 6px 18px rgba(9, 9, 11, 0.22), inset 0 0 8px rgba(0, 0, 0, 0.35)"
+                    : "0 0 18px rgba(250, 250, 250, 0.22), inset 0 0 10px rgba(0, 0, 0, 0.65)",
                 }}
               >
                 <img
@@ -401,23 +406,26 @@ export default function LoveLoomOrbit() {
                   onError={() =>
                     setImgFallbacks((prev) => ({ ...prev, [planet.id]: true }))
                   }
-                  className="w-full h-full object-cover select-none transition-transform duration-300 group-hover:scale-110"
+                  className="w-full h-full object-cover grayscale contrast-110 select-none transition-transform duration-300 group-hover:scale-110"
                   draggable={false}
                 />
 
-                {/* 3D Spherical Terminator Shadow (faces away from central star) */}
+                {/* 3D Spherical Terminator Shadow */}
                 <span
                   aria-hidden="true"
                   className="absolute inset-0 rounded-full pointer-events-none"
                   style={{
-                    background: `radial-gradient(circle at ${50 - shadowOffsetX}% ${50 - shadowOffsetY}%, rgba(255,244,214,0.18) 0%, rgba(9,13,20,0.15) 48%, rgba(4,6,11,0.86) 86%)`,
+                    background: `radial-gradient(circle at ${50 - shadowOffsetX}% ${50 - shadowOffsetY}%, rgba(255,255,255,0.2) 0%, rgba(9,9,11,0.12) 48%, rgba(9,9,11,0.84) 88%)`,
                   }}
                 />
 
                 {/* Specular Atmospheric Rim */}
                 <span
                   aria-hidden="true"
-                  className="absolute inset-0 rounded-full pointer-events-none border border-[#f5cd82]/35"
+                  className="absolute inset-0 rounded-full pointer-events-none border"
+                  style={{
+                    borderColor: isLight ? "rgba(9, 9, 11, 0.25)" : "rgba(250, 250, 250, 0.3)",
+                  }}
                 />
               </span>
             </button>
@@ -431,18 +439,18 @@ export default function LoveLoomOrbit() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="planet-modal-title"
-          className="fixed inset-0 bg-[#04060b]/80 backdrop-blur-md z-[2000] flex items-center justify-center p-4 cursor-pointer"
+          className="fixed inset-0 bg-[#09090b]/75 backdrop-blur-md z-[2000] flex items-center justify-center p-4 cursor-pointer"
           onClick={() => setSelectedPlanet(null)}
         >
           <div
-            className="w-full max-w-md observatory-floating rounded-[18px] p-6 md:p-8 relative animate-modal-enter cursor-default"
+            className="w-full max-w-md mono-floating rounded-[18px] p-6 md:p-8 relative animate-modal-enter cursor-default"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               aria-label="Tutup catatan planet"
               onClick={() => setSelectedPlanet(null)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full border border-[#243044] bg-[#182233] text-[#9aa6b8] hover:text-[#f3efe7] hover:border-[#e2a856] transition-colors flex items-center justify-center cursor-pointer"
+              className="absolute top-4 right-4 w-8 h-8 rounded-full border border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-colors flex items-center justify-center cursor-pointer"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M18 6 6 18M6 6l12 12" />
@@ -450,26 +458,26 @@ export default function LoveLoomOrbit() {
             </button>
 
             <div className="flex flex-col items-center text-center">
-              <div className="w-24 h-24 md:w-28 md:h-28 rounded-full border border-[#e2a856]/60 overflow-hidden shadow-[0_12px_32px_rgba(0,0,0,0.5)] mb-5">
+              <div className="w-24 h-24 md:w-28 md:h-28 rounded-full border border-[var(--border-strong)] overflow-hidden shadow-[var(--shadow-card)] mb-5">
                 <img
                   src={imgFallbacks[selectedPlanet.id] ? selectedPlanet.fallbackImage : selectedPlanet.image}
                   alt={selectedPlanet.caption}
                   onError={() =>
                     setImgFallbacks((prev) => ({ ...prev, [selectedPlanet.id]: true }))
                   }
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover grayscale"
                 />
               </div>
 
-              <span className="font-mono text-xs uppercase tracking-[0.16em] text-[#e2a856] mb-2">
+              <span className="font-mono text-xs uppercase tracking-[0.16em] text-[var(--text-muted)] mb-2">
                 {selectedPlanet.caption}
               </span>
 
-              <h4 id="planet-modal-title" className="font-display text-2xl text-[#f3efe7] italic mb-4">
+              <h4 id="planet-modal-title" className="font-display text-2xl text-[var(--text-primary)] italic mb-4">
                 Catatan Orbit
               </h4>
 
-              <p className="font-body text-[#9aa6b8] text-sm md:text-base leading-relaxed">
+              <p className="font-body text-[var(--text-muted)] text-sm md:text-base leading-relaxed">
                 &ldquo;{selectedPlanet.message}&rdquo;
               </p>
             </div>

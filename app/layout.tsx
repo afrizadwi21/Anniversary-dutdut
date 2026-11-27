@@ -34,9 +34,10 @@ export default function RootLayout({
   return (
     <html
       lang="id"
+      data-theme="dark"
       className={`${baskervville.variable} ${manrope.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#090d14] text-[#f3efe7]">{children}</body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

@@ -2,7 +2,13 @@
 
 import React, { useRef, useState, useEffect } from "react";
 
-export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boolean }) {
+export default function MusicPlayer({
+  isAutoPlay = false,
+  theme = "dark",
+}: {
+  isAutoPlay?: boolean;
+  theme?: "dark" | "light";
+}) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
@@ -16,6 +22,8 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.8);
   const [coverFallback, setCoverFallback] = useState(false);
+
+  const isLight = theme === "light";
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -60,7 +68,9 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
 
     if (!audioContextRef.current) {
       try {
-        const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        const AudioContextClass =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
         const ctx = new AudioContextClass();
         const analyser = ctx.createAnalyser();
         analyser.fftSize = 64;
@@ -94,11 +104,7 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
       analyser.getByteFrequencyData(dataArray);
       canvasCtx.clearRect(0, 0, w, h);
 
-      const gradient = canvasCtx.createLinearGradient(0, 0, w, 0);
-      gradient.addColorStop(0, "rgba(226, 168, 86, 0.45)");
-      gradient.addColorStop(0.5, "rgba(245, 205, 130, 0.9)");
-      gradient.addColorStop(1, "rgba(226, 168, 86, 0.45)");
-      canvasCtx.fillStyle = gradient;
+      canvasCtx.fillStyle = isLight ? "rgba(9, 9, 11, 0.78)" : "rgba(250, 250, 250, 0.85)";
 
       const barWidth = (w / bufferLength) * 1.5;
       let x = 0;
@@ -122,6 +128,12 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
     if (animationRef.current) cancelAnimationFrame(animationRef.current);
     render();
   };
+
+  useEffect(() => {
+    if (isPlaying) {
+      initVisualizer();
+    }
+  }, [theme]);
 
   const handlePlay = () => {
     const audio = audioRef.current;
@@ -181,8 +193,8 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
         }}
         aria-expanded={isOpen}
         aria-label={isOpen ? "Tutup pemutar musik" : "Buka pemutar musik"}
-        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-12 h-12 rounded-full observatory-floating z-[999] flex items-center justify-center cursor-pointer transition-all duration-300 hover:border-[#e2a856] active:scale-95 ${
-          isPlaying ? "border-[#e2a856] text-[#e2a856]" : "text-[#f3efe7]"
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-12 h-12 rounded-full mono-floating z-[999] flex items-center justify-center cursor-pointer transition-all duration-300 hover:border-[var(--border-strong)] active:scale-95 ${
+          isPlaying ? "border-[var(--accent-ink)] text-[var(--accent-ink)]" : "text-[var(--text-muted)]"
         }`}
       >
         <svg
@@ -204,7 +216,7 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
 
       {/* Music Player Panel */}
       <div
-        className={`fixed bottom-4 left-4 sm:bottom-6 sm:left-6 w-[calc(100vw-5.5rem)] sm:w-[320px] observatory-floating rounded-[18px] p-4 z-[990] flex flex-col gap-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`fixed bottom-4 left-4 sm:bottom-6 sm:left-6 w-[calc(100vw-5.5rem)] sm:w-[320px] mono-floating rounded-[18px] p-4 z-[990] flex flex-col gap-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isOpen
             ? "translate-y-0 opacity-100 pointer-events-auto"
             : "translate-y-4 opacity-0 pointer-events-none"
@@ -212,17 +224,17 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
       >
         {/* Track Details */}
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-[10px] overflow-hidden border border-[#243044] shrink-0 bg-[#182233]">
+          <div className="w-11 h-11 rounded-[10px] overflow-hidden border border-[var(--border-hairline)] shrink-0 bg-[var(--bg-elevated)]">
             <img
               src={coverFallback ? "/assets/dummy/memory-1.svg" : "/assets/images/img1.jpeg"}
               alt="You and I — One Direction"
               onError={() => setCoverFallback(true)}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover grayscale"
             />
           </div>
           <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-[#f3efe7] text-sm font-medium truncate">You and I</span>
-            <span className="text-[#9aa6b8] text-xs truncate mt-0.5">One Direction</span>
+            <span className="text-[var(--text-primary)] text-sm font-medium truncate">You and I</span>
+            <span className="text-[var(--text-muted)] text-xs truncate mt-0.5">One Direction</span>
           </div>
           <canvas
             ref={canvasRef}
@@ -241,9 +253,9 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
             value={currentTime}
             onChange={handleSeek}
             aria-label="Seek audio timeline"
-            className="w-full h-1 bg-[#243044] rounded-lg appearance-none cursor-pointer accent-[#e2a856]"
+            className="w-full h-1 bg-[var(--border-hairline)] rounded-lg appearance-none cursor-pointer accent-[var(--accent-ink)]"
           />
-          <div className="flex justify-between font-mono text-xs text-[#9aa6b8] mt-0.5">
+          <div className="flex justify-between font-mono text-xs text-[var(--text-muted)] mt-0.5">
             <span>{formatTime(currentTime)}</span>
             <span>{formatTime(duration)}</span>
           </div>
@@ -256,7 +268,7 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
               type="button"
               onClick={togglePlay}
               aria-label={isPlaying ? "Jeda lagu" : "Putar lagu"}
-              className="w-9 h-9 rounded-full bg-[#182233] border border-[#243044] hover:border-[#e2a856] flex items-center justify-center text-[#f3efe7] active:scale-95 transition-all cursor-pointer"
+              className="w-9 h-9 rounded-full bg-[var(--bg-elevated)] border border-[var(--border-hairline)] hover:border-[var(--border-strong)] flex items-center justify-center text-[var(--text-primary)] active:scale-95 transition-all cursor-pointer"
             >
               {isPlaying ? (
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -269,13 +281,13 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
                 </svg>
               )}
             </button>
-            <span className="font-mono text-xs text-[#9aa6b8] select-none">
+            <span className="font-mono text-xs text-[var(--text-muted)] select-none">
               {isPlaying ? "PLAYING" : "PAUSED"}
             </span>
           </div>
 
           <div className="flex items-center gap-2 max-w-[96px]">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="text-[#9aa6b8] shrink-0" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--text-muted)] shrink-0" aria-hidden="true">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
               <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
             </svg>
@@ -287,7 +299,7 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
               value={volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
               aria-label="Audio volume"
-              className="w-16 h-1 bg-[#243044] rounded-lg appearance-none cursor-pointer accent-[#e2a856]"
+              className="w-16 h-1 bg-[var(--border-hairline)] rounded-lg appearance-none cursor-pointer accent-[var(--accent-ink)]"
             />
           </div>
         </div>

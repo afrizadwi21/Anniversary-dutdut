@@ -1,20 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
   <defs>
     <radialGradient id="g1" cx="35%" cy="30%" r="75%">
-      <stop offset="0%" stop-color="#26334d"/>
-      <stop offset="55%" stop-color="#111824"/>
-      <stop offset="100%" stop-color="#090d14"/>
-    </radialGradient>
-    <radialGradient id="s1" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#f5cd82" stop-opacity="0.45"/>
-      <stop offset="100%" stop-color="#e2a856" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#27272c"/>
+      <stop offset="55%" stop-color="#141417"/>
+      <stop offset="100%" stop-color="#09090b"/>
     </radialGradient>
   </defs>
   <rect width="600" height="600" fill="url(#g1)"/>
-  <circle cx="300" cy="280" r="180" fill="url(#s1)"/>
-  <circle cx="300" cy="280" r="110" fill="none" stroke="#e2a856" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 6"/>
-  <circle cx="300" cy="280" r="160" fill="none" stroke="#9aa6b8" stroke-opacity="0.2" stroke-width="1"/>
-  <circle cx="380" cy="210" r="10" fill="#e2a856"/>
-  <text x="300" y="505" text-anchor="middle" fill="#f3efe7" font-family="Georgia, serif" font-size="22" letter-spacing="2">01 / JALAN JALAN</text>
-  <text x="300" y="535" text-anchor="middle" fill="#9aa6b8" font-family="monospace" font-size="12" letter-spacing="3">DUMMY PHOTO — REPLACE LATER</text>
+  <circle cx="300" cy="280" r="110" fill="none" stroke="#fafafa" stroke-opacity="0.28" stroke-width="1" stroke-dasharray="4 6"/>
+  <circle cx="300" cy="280" r="160" fill="none" stroke="#a1a1aa" stroke-opacity="0.2" stroke-width="1"/>
+  <circle cx="380" cy="210" r="10" fill="#fafafa"/>
+  <text x="300" y="505" text-anchor="middle" fill="#fafafa" font-family="Georgia, serif" font-size="22" letter-spacing="2">01 / JALAN JALAN</text>
+  <text x="300" y="535" text-anchor="middle" fill="#a1a1aa" font-family="monospace" font-size="12" letter-spacing="3">MONOCHROME PLACEHOLDER</text>
 </svg>

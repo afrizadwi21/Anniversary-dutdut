@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import MusicPlayer from "@/components/MusicPlayer";
 import CountdownTimer from "@/components/CountdownTimer";
 import TimelineMilestones from "@/components/TimelineMilestones";
@@ -42,7 +42,76 @@ const GALLERY_ITEMS = [
 
 export default function Home() {
   const [playMusic, setPlayMusic] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [galleryFallbacks, setGalleryFallbacks] = useState<Record<number, boolean>>({});
+  const progressBarRef = useRef<HTMLDivElement | null>(null);
+  const lastScrollY = useRef(0);
+
+  // Sync theme to <html data-theme="...">
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  // Bidirectional scroll choreography (smooth reveal on scroll down AND scroll up + top progress hairline)
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const elements = Array.from(document.querySelectorAll<HTMLElement>("[data-scroll-reveal]"));
+
+    if (reduced) {
+      elements.forEach((el) => el.classList.add("is-visible"));
+      return;
+    }
+
+    let scrollDir: "down" | "up" = "down";
+    let rafId: number | null = null;
+
+    const updateScrollProgress = () => {
+      const y = window.scrollY;
+      scrollDir = y >= lastScrollY.current ? "down" : "up";
+      lastScrollY.current = y;
+
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? Math.min(1, Math.max(0, y / docHeight)) : 0;
+      if (progressBarRef.current) {
+        progressBarRef.current.style.transform = `scaleX(${progress})`;
+      }
+      rafId = null;
+    };
+
+    const onScroll = () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(updateScrollProgress);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    updateScrollProgress();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const el = entry.target as HTMLElement;
+          if (entry.isIntersecting) {
+            el.classList.add("is-visible");
+          } else {
+            // Set direction so re-entering from above or below glides naturally
+            const rect = entry.boundingClientRect;
+            el.setAttribute("data-scroll-dir", rect.top < 0 ? "up" : scrollDir);
+            el.classList.remove("is-visible");
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      observer.disconnect();
+    };
+  }, []);
 
   const scrollToSection = (id: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -53,59 +122,84 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#090d14] text-[#f3efe7] pb-28">
-      {/* Subtle Ambient Observatory Backdrop */}
+    <div className="relative min-h-screen bg-[var(--bg-canvas)] text-[var(--text-primary)] pb-28 transition-colors duration-300">
+      {/* Hairline Scroll Progress Bar */}
       <div
+        ref={progressBarRef}
         aria-hidden="true"
-        className="fixed inset-0 pointer-events-none z-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 65% 40% at 50% 0%, rgba(226, 168, 86, 0.08) 0%, transparent 70%), radial-gradient(ellipse 50% 35% at 85% 90%, rgba(24, 34, 51, 0.55) 0%, transparent 70%)",
-        }}
+        className="fixed top-0 left-0 right-0 h-[2px] bg-[var(--accent-ink)] origin-left z-50 pointer-events-none"
+        style={{ transform: "scaleX(0)" }}
       />
 
-      {/* Minimal Header */}
-      <header className="sticky top-0 z-40 border-b border-[#243044]/70 bg-[#090d14]/85 backdrop-blur-md">
+      {/* Minimal Header with Light/Dark Toggle */}
+      <header className="sticky top-0 z-40 border-b border-[var(--border-hairline)] bg-[var(--bg-header)] backdrop-blur-md transition-colors duration-300">
         <nav
           aria-label="Navigasi utama"
-          className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between"
+          className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4"
         >
           <a
             href="#hero"
             onClick={scrollToSection("hero")}
-            className="font-display italic text-lg text-[#f3efe7] hover:text-[#e2a856] transition-colors"
+            className="font-display italic text-lg text-[var(--text-primary)] hover:opacity-75 transition-opacity shrink-0"
           >
             buat dutdut
           </a>
 
-          <div className="flex items-center gap-5 sm:gap-7 font-mono text-xs uppercase tracking-[0.12em] text-[#9aa6b8]">
-            <a href="#orbit" onClick={scrollToSection("orbit")} className="hover:text-[#e2a856] transition-colors">
-              Orbit
-            </a>
-            <a href="#letter" onClick={scrollToSection("letter")} className="hover:text-[#e2a856] transition-colors">
-              Surat
-            </a>
-            <a href="#timeline" onClick={scrollToSection("timeline")} className="hover:text-[#e2a856] transition-colors">
-              Jejak
-            </a>
-            <a href="#memories" onClick={scrollToSection("memories")} className="hover:text-[#e2a856] transition-colors">
-              Galeri
-            </a>
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="hidden sm:flex items-center gap-6 font-mono text-xs uppercase tracking-[0.12em] text-[var(--text-muted)]">
+              <a href="#orbit" onClick={scrollToSection("orbit")} className="hover:text-[var(--text-primary)] transition-colors">
+                Orbit
+              </a>
+              <a href="#letter" onClick={scrollToSection("letter")} className="hover:text-[var(--text-primary)] transition-colors">
+                Surat
+              </a>
+              <a href="#timeline" onClick={scrollToSection("timeline")} className="hover:text-[var(--text-primary)] transition-colors">
+                Jejak
+              </a>
+              <a href="#memories" onClick={scrollToSection("memories")} className="hover:text-[var(--text-primary)] transition-colors">
+                Galeri
+              </a>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+              aria-label={theme === "dark" ? "Ubah ke mode terang" : "Ubah ke mode gelap"}
+              aria-pressed={theme === "light"}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--border-hairline)] bg-[var(--bg-surface)] text-xs font-mono uppercase tracking-[0.1em] text-[var(--text-primary)] hover:border-[var(--border-strong)] transition-colors cursor-pointer"
+            >
+              {theme === "dark" ? (
+                <>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4" />
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                  </svg>
+                  <span>Light</span>
+                </>
+              ) : (
+                <>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                  </svg>
+                  <span>Dark</span>
+                </>
+              )}
+            </button>
           </div>
         </nav>
       </header>
 
-      <MusicPlayer isAutoPlay={playMusic} />
+      <MusicPlayer isAutoPlay={playMusic} theme={theme} />
 
       <main className="relative z-10">
         {/* ===== HERO SECTION ===== */}
         <section id="hero" className="min-h-[88vh] flex items-center justify-center px-4 sm:px-6 py-20 text-center">
-          <div className="max-w-3xl mx-auto w-full">
-            <h1 className="font-display text-5xl sm:text-7xl md:text-8xl font-normal tracking-[-0.02em] leading-[1.05] text-[#f3efe7]">
-              buat <em className="italic text-[#e2a856]">dutdut</em>
+          <div data-scroll-reveal className="scroll-reveal is-visible max-w-3xl mx-auto w-full">
+            <h1 className="font-display text-5xl sm:text-7xl md:text-8xl font-normal tracking-[-0.02em] leading-[1.05] text-[var(--text-primary)]">
+              buat <em className="italic">dutdut</em>
             </h1>
 
-            <p className="font-body text-base sm:text-lg text-[#9aa6b8] max-w-xl mx-auto mt-6 leading-relaxed">
+            <p className="font-body text-base sm:text-lg text-[var(--text-muted)] max-w-xl mx-auto mt-6 leading-relaxed">
               Jaja &amp; Dutdut — hari demi hari kita lalui bersama, dan setiap detiknya adalah bagian terindah dalam hidup akuu cayangg.
             </p>
 
@@ -115,7 +209,7 @@ export default function Home() {
               <a
                 href="#orbit"
                 onClick={scrollToSection("orbit")}
-                className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#e2a856] text-[#090d14] font-body text-sm font-semibold tracking-wide hover:bg-[#f5cd82] transition-colors"
+                className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[var(--accent-ink)] text-[var(--accent-contrast)] font-body text-sm font-semibold tracking-wide hover:opacity-85 transition-opacity"
               >
                 <span>Jelajahi Orbit 3D</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -126,7 +220,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setPlayMusic(true)}
-                className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full border border-[#243044] bg-[#111824] text-[#f3efe7] font-body text-sm font-medium hover:border-[#e2a856] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full border border-[var(--border-hairline)] bg-[var(--bg-surface)] text-[var(--text-primary)] font-body text-sm font-medium hover:border-[var(--border-strong)] transition-colors cursor-pointer"
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <polygon points="6 4 20 12 6 20 6 4" />
@@ -138,30 +232,30 @@ export default function Home() {
         </section>
 
         {/* ===== 3D PLANETARIUM SECTION ===== */}
-        <section id="orbit" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[#243044]/60">
-          <div className="max-w-5xl mx-auto text-center">
-            <h2 className="font-display text-3xl sm:text-5xl text-[#f3efe7] mb-3">
-              Pusat Gravitasi <em className="italic text-[#e2a856]">Semesta Kita</em>
+        <section id="orbit" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[var(--border-hairline)]">
+          <div data-scroll-reveal className="scroll-reveal max-w-5xl mx-auto text-center">
+            <h2 className="font-display text-3xl sm:text-5xl text-[var(--text-primary)] mb-3">
+              Pusat Gravitasi <em className="italic">Semesta Kita</em>
             </h2>
-            <LoveLoomOrbit />
+            <LoveLoomOrbit theme={theme} />
           </div>
         </section>
 
         {/* ===== LETTER SECTION ===== */}
-        <section id="letter" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[#243044]/60">
-          <div className="max-w-2xl mx-auto">
-            <article className="observatory-surface p-7 sm:p-11">
-              <p className="font-mono text-xs uppercase tracking-[0.14em] text-[#e2a856] mb-4">
+        <section id="letter" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[var(--border-hairline)]">
+          <div data-scroll-reveal className="scroll-reveal max-w-2xl mx-auto">
+            <article className="mono-surface p-7 sm:p-11">
+              <p className="font-mono text-xs uppercase tracking-[0.14em] text-[var(--text-muted)] mb-4">
                 Dibacaaaa, awas aja kalo ga dibaca, tau ko lebay
               </p>
 
-              <h2 className="font-display text-3xl sm:text-4xl text-[#f3efe7] leading-snug mb-8">
+              <h2 className="font-display text-3xl sm:text-4xl text-[var(--text-primary)] leading-snug mb-8">
                 Menapaki Setiap Detik,{" "}
-                <em className="italic text-[#e2a856]">Melangkah Bersama,</em>{" "}
+                <em className="italic">Melangkah Bersama,</em>{" "}
                 Menulis Cerita Kita.
               </h2>
 
-              <div className="space-y-5 font-body text-[#9aa6b8] text-base leading-[1.8]">
+              <div className="space-y-5 font-body text-[var(--text-muted)] text-base leading-[1.8]">
                 <p>
                   Sejak hari pertama kita melangkah bersama, setiap momen yang kita lalui telah terukir menjadi melodi terindah dalam hidup akuu. Kita telah melewati banyak hal banget yaa hahaha dari menertawakan hal-hal kecil, hingga saling mendekap erat untuk menenangkan badai yang sesekali datang menghampiri. Kamu bukan sekadar seseorang yang mendampingi akuu, kamu adalah rumah tempat ternyaman buat aku.
                 </p>
@@ -173,7 +267,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-[#243044] font-display italic text-xl text-[#e2a856]">
+              <div className="mt-8 pt-6 border-t border-[var(--border-hairline)] font-display italic text-xl text-[var(--text-primary)]">
                 — You and I
               </div>
             </article>
@@ -181,19 +275,19 @@ export default function Home() {
         </section>
 
         {/* ===== TIMELINE SECTION ===== */}
-        <section id="timeline" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[#243044]/60">
+        <section id="timeline" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[var(--border-hairline)]">
           <div className="max-w-5xl mx-auto text-center">
-            <h2 className="font-display text-3xl sm:text-5xl text-[#f3efe7] mb-12">
-              Perjalanan Indah <em className="italic text-[#e2a856]">Yang Kita Lewati</em>
+            <h2 data-scroll-reveal className="scroll-reveal font-display text-3xl sm:text-5xl text-[var(--text-primary)] mb-12">
+              Perjalanan Indah <em className="italic">Yang Kita Lewati</em>
             </h2>
             <TimelineMilestones />
           </div>
         </section>
 
         {/* ===== CHERISHED QUALITIES SECTION ===== */}
-        <section id="qualities" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[#243044]/60">
+        <section id="qualities" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[var(--border-hairline)]">
           <div className="max-w-4xl mx-auto">
-            <h2 className="font-display text-3xl sm:text-5xl text-[#f3efe7] text-center mb-14">
+            <h2 data-scroll-reveal className="scroll-reveal font-display text-3xl sm:text-5xl text-[var(--text-primary)] text-center mb-14">
               What I Cherish About Us
             </h2>
 
@@ -201,17 +295,19 @@ export default function Home() {
               {CHERISHED_NOTES.map((item, i) => (
                 <li
                   key={i}
-                  className="pt-5 border-t border-[#243044] flex flex-col gap-2"
+                  data-scroll-reveal
+                  className="scroll-reveal pt-5 border-t border-[var(--border-hairline)] flex flex-col gap-2"
+                  style={{ transitionDelay: `${i * 55}ms` }}
                 >
                   <div className="flex items-baseline gap-3">
-                    <span className="font-mono text-xs text-[#e2a856]">
+                    <span className="font-mono text-xs text-[var(--text-muted)]">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <h3 className="font-display text-2xl text-[#f3efe7]">
+                    <h3 className="font-display text-2xl text-[var(--text-primary)]">
                       {item.title}
                     </h3>
                   </div>
-                  <p className="font-body text-sm leading-relaxed text-[#9aa6b8] pl-7">
+                  <p className="font-body text-sm leading-relaxed text-[var(--text-muted)] pl-7">
                     {item.text}
                   </p>
                 </li>
@@ -221,29 +317,31 @@ export default function Home() {
         </section>
 
         {/* ===== MEMORIES GALLERY SECTION ===== */}
-        <section id="memories" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[#243044]/60">
+        <section id="memories" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[var(--border-hairline)]">
           <div className="max-w-5xl mx-auto">
-            <h2 className="font-display text-3xl sm:text-5xl text-[#f3efe7] text-center mb-12">
-              Our Beautiful <em className="italic text-[#e2a856]">Pictures</em>
+            <h2 data-scroll-reveal className="scroll-reveal font-display text-3xl sm:text-5xl text-[var(--text-primary)] text-center mb-12">
+              Our Beautiful <em className="italic">Pictures</em>
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {GALLERY_ITEMS.map((item, idx) => (
                 <figure
                   key={idx}
-                  className="observatory-surface overflow-hidden flex flex-col"
+                  data-scroll-reveal
+                  className="scroll-reveal mono-surface overflow-hidden flex flex-col"
+                  style={{ transitionDelay: `${idx * 70}ms` }}
                 >
-                  <div className="aspect-square w-full bg-[#182233] overflow-hidden">
+                  <div className="aspect-square w-full bg-[var(--bg-elevated)] overflow-hidden">
                     <img
                       src={galleryFallbacks[idx] ? item.fallback : item.src}
                       alt={`Jaja dan Dutdut — ${item.caption}`}
                       onError={() =>
                         setGalleryFallbacks((prev) => ({ ...prev, [idx]: true }))
                       }
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                      className="w-full h-full object-cover grayscale contrast-105 transition-transform duration-500 hover:scale-105"
                     />
                   </div>
-                  <figcaption className="px-4 py-3 font-display italic text-lg text-[#f3efe7] border-t border-[#243044] text-center">
+                  <figcaption className="px-4 py-3 font-display italic text-lg text-[var(--text-primary)] border-t border-[var(--border-hairline)] text-center">
                     {item.caption}
                   </figcaption>
                 </figure>
@@ -253,17 +351,17 @@ export default function Home() {
         </section>
 
         {/* ===== CLOSING SECTION ===== */}
-        <section id="closing" className="py-24 px-4 sm:px-6 border-t border-[#243044]/60 text-center">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="font-display text-4xl sm:text-5xl text-[#f3efe7] mb-6">
-              Dutdut Balaga, <em className="italic text-[#e2a856]">Jaja Baik</em>
+        <section id="closing" className="py-24 px-4 sm:px-6 border-t border-[var(--border-hairline)] text-center">
+          <div data-scroll-reveal className="scroll-reveal max-w-2xl mx-auto">
+            <h2 className="font-display text-4xl sm:text-5xl text-[var(--text-primary)] mb-6">
+              Dutdut Balaga, <em className="italic">Jaja Baik</em>
             </h2>
 
-            <p className="font-body text-[#9aa6b8] text-base leading-relaxed mb-8">
+            <p className="font-body text-[var(--text-muted)] text-base leading-relaxed mb-8">
               Di hari yang istimewa ini, aku ingin kamu tahu bahwa mencintaimu dan melangkah bersamamu adalah petualangan terbaik dalam hidup akuuuu. Setiap tahun yang kita habiskan bersama adalah anugerah terindah bagi akuuu. Setiap tawa, setiap pelukan hangat, dan setiap detak jantung kita yang beriringan.
             </p>
 
-            <p className="font-display italic text-2xl text-[#e2a856]">
+            <p className="font-display italic text-2xl text-[var(--text-primary)]">
               kamu baong
             </p>
           </div>
