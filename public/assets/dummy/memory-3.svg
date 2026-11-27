@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <defs>
+    <radialGradient id="g3" cx="50%" cy="25%" r="80%">
+      <stop offset="0%" stop-color="#243044"/>
+      <stop offset="65%" stop-color="#111824"/>
+      <stop offset="100%" stop-color="#090d14"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#g3)"/>
+  <circle cx="300" cy="280" r="140" fill="none" stroke="#243044" stroke-width="1.5"/>
+  <circle cx="300" cy="280" r="95" fill="none" stroke="#e2a856" stroke-opacity="0.35" stroke-width="1"/>
+  <circle cx="300" cy="280" r="42" fill="#e2a856" fill-opacity="0.2" stroke="#f5cd82" stroke-opacity="0.6" stroke-width="1"/>
+  <text x="300" y="505" text-anchor="middle" fill="#f3efe7" font-family="Georgia, serif" font-size="22" letter-spacing="2">03 / SUPPORT SYSTEM</text>
+  <text x="300" y="535" text-anchor="middle" fill="#9aa6b8" font-family="monospace" font-size="12" letter-spacing="3">DUMMY PHOTO — REPLACE LATER</text>
+</svg>

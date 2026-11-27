@@ -7,7 +7,7 @@ interface TimeLeft {
   hours: number;
   minutes: number;
   seconds: number;
-  isAnniversaryDay: boolean;
+  isSpecialDay: boolean;
 }
 
 export default function CountdownTimer() {
@@ -16,7 +16,7 @@ export default function CountdownTimer() {
     hours: 0,
     minutes: 0,
     seconds: 0,
-    isAnniversaryDay: false,
+    isSpecialDay: false,
   });
   const [isMounted, setIsMounted] = useState(false);
 
@@ -27,31 +27,27 @@ export default function CountdownTimer() {
       const now = new Date();
       const currentYear = now.getFullYear();
 
-      // Target is June 9th
-      let targetDate = new Date(currentYear, 5, 9, 0, 0, 0); // Month is 0-indexed, so 5 is June
+      // Target: June 9th
+      let targetDate = new Date(currentYear, 5, 9, 0, 0, 0);
 
-      // If today is June 9th, show a celebration message
       if (now.getMonth() === 5 && now.getDate() === 9) {
-        return { days: 0, hours: 0, minutes: 0, seconds: 0, isAnniversaryDay: true };
+        return { days: 0, hours: 0, minutes: 0, seconds: 0, isSpecialDay: true };
       }
 
-      // If target date has passed for this year, target next year's June 9th
       if (now.getTime() > targetDate.getTime()) {
         targetDate = new Date(currentYear + 1, 5, 9, 0, 0, 0);
       }
 
       const difference = targetDate.getTime() - now.getTime();
-
       const days = Math.floor(difference / (1000 * 60 * 60 * 24));
       const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
       const minutes = Math.floor((difference / 1000 / 60) % 60);
       const seconds = Math.floor((difference / 1000) % 60);
 
-      return { days, hours, minutes, seconds, isAnniversaryDay: false };
+      return { days, hours, minutes, seconds, isSpecialDay: false };
     };
 
     setTimeLeft(calculateTimeLeft());
-
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
@@ -62,18 +58,18 @@ export default function CountdownTimer() {
   if (!isMounted) return null;
 
   return (
-    <div className="my-8 px-4 flex flex-col items-center justify-center w-full max-w-2xl mx-auto">
-      <p className="text-center font-display text-sm uppercase tracking-[0.2em] text-[#ff96b4] mb-4 drop-shadow-[0_0_8px_rgba(255,150,180,0.3)]">
-        {timeLeft.isAnniversaryDay ? "Hari Bahagia Kita Telah Tiba!" : "Menghitung Mundur Hari Bahagia Kita"}
+    <div className="my-8 flex flex-col items-center justify-center w-full max-w-xl mx-auto">
+      <p className="text-center font-mono text-xs uppercase tracking-[0.18em] text-[#e2a856] mb-4">
+        {timeLeft.isSpecialDay ? "Hari Istimewa Kita — 9 Juni" : "Menuju 9 Juni Berikutnya"}
       </p>
 
-      {timeLeft.isAnniversaryDay ? (
-        <div className="surface-tonal px-8 py-6 text-center">
-          <h3 className="font-display italic text-3xl md:text-4xl text-[var(--text-primary)] font-light leading-relaxed">
-            Happy Anniversary, My Love! 💖
+      {timeLeft.isSpecialDay ? (
+        <div className="observatory-surface px-8 py-6 text-center w-full">
+          <h3 className="font-display italic text-2xl md:text-3xl text-[#f3efe7] leading-relaxed">
+            Hari Ini Milik Kita, Dutdut
           </h3>
-          <p className="font-body text-[var(--text-secondary)] text-sm font-light mt-2 tracking-wide">
-            Hari ini adalah milik kita. Selamat merayakan cinta kita yang indah sayangggg.
+          <p className="font-body text-[#9aa6b8] text-sm mt-2">
+            Terima kasih sudah terus melangkah bersama sampai hari ini.
           </p>
         </div>
       ) : (
@@ -82,16 +78,16 @@ export default function CountdownTimer() {
             { value: timeLeft.days, label: "Hari" },
             { value: timeLeft.hours, label: "Jam" },
             { value: timeLeft.minutes, label: "Menit" },
-            { value: timeLeft.seconds, label: "Detik" }
+            { value: timeLeft.seconds, label: "Detik" },
           ].map((item, index) => (
             <div
               key={index}
-              className="surface-tonal flex flex-col items-center justify-center py-4 md:py-6 relative overflow-hidden group hover:border-[var(--accent-primary)] transition-all duration-500"
+              className="observatory-surface flex flex-col items-center justify-center py-4 md:py-5"
             >
-              <span className="font-display text-3xl md:text-5xl font-light text-[var(--text-primary)] tracking-normal">
+              <span className="font-mono text-2xl md:text-4xl font-medium text-[#f3efe7] tabular-nums">
                 {String(item.value).padStart(2, "0")}
               </span>
-              <span className="font-body text-xs uppercase tracking-[0.15em] text-[var(--text-secondary)] mt-1 font-light">
+              <span className="font-mono text-xs uppercase tracking-[0.14em] text-[#9aa6b8] mt-1.5">
                 {item.label}
               </span>
             </div>

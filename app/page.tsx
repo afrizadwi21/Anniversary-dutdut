@@ -1,274 +1,218 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import GiftBox from "@/components/GiftBox";
-import PetalCanvas from "@/components/PetalCanvas";
-import CursorTrail from "@/components/CursorTrail";
-import InteractiveCard from "@/components/InteractiveCard";
+import React, { useState } from "react";
 import MusicPlayer from "@/components/MusicPlayer";
 import CountdownTimer from "@/components/CountdownTimer";
 import TimelineMilestones from "@/components/TimelineMilestones";
 import LoveLoomOrbit from "@/components/LoveLoomOrbit";
 
-const CELEBRATE_CARDS = [
+const CHERISHED_NOTES = [
   {
-    icon: "🌹",
     title: "Your Smile",
-    text: "The one that made me fall — and still does, every single day. Happy anniversary to that smile.",
-    delayClass: "delay0",
+    text: "The one that made me fall — and still does, every single day.",
   },
   {
-    icon: "💫",
     title: "Your Soul",
     text: "Rare, luminous, and more precious than anything this world has to offer. I'm so lucky it's mine.",
-    delayClass: "delay1",
   },
   {
-    icon: "🌸",
     title: "Your Kindness",
     text: "The way you love and care for everyone around you makes this world a softer, better place.",
-    delayClass: "delay2",
   },
   {
-    icon: "✨",
     title: "Your Laughter",
     text: "My favourite sound in the universe. May our days be filled with endless reasons to laugh.",
-    delayClass: "delay3",
   },
   {
-    icon: "🌺",
     title: "Your Strength",
     text: "We've walked through storms with such grace. I admire you more with every passing year.",
-    delayClass: "delay4",
   },
   {
-    icon: "💖",
     title: "Simply You",
     text: "Every version of you, at every milestone — you are more than enough. You are everything.",
-    delayClass: "delay5",
   },
 ];
 
-const GARDEN_FLOWERS = [
-  { emoji: "🌹", name: "Rose", wish: "May love surround us always", class: "gf1" },
-  { emoji: "🌸", name: "Cherry Blossom", wish: "May our love be as soft as you", class: "gf2" },
-  { emoji: "🪷", name: "Lotus", wish: "May we bloom in all our glory", class: "gf3" },
-  { emoji: "🌺", name: "Hibiscus", wish: "May passion light our path", class: "gf4" },
-  { emoji: "🌼", name: "Daisy", wish: "May joy follow us everywhere", class: "gf5" },
-  { emoji: "🌷", name: "Tulip", wish: "May all our wishes come true", class: "gf6" },
-  { emoji: "🌻", name: "Sunflower", wish: "May our future shine bright", class: "gf7" },
+const GALLERY_ITEMS = [
+  { src: "/assets/images/img1.jpeg", fallback: "/assets/dummy/memory-1.svg", caption: "our" },
+  { src: "/assets/images/img2.jpeg", fallback: "/assets/dummy/memory-2.svg", caption: "beautiful" },
+  { src: "/assets/images/img3.jpeg", fallback: "/assets/dummy/memory-3.svg", caption: "journey" },
+  { src: "/assets/images/img4.jpeg", fallback: "/assets/dummy/memory-4.svg", caption: "together" },
 ];
 
 export default function Home() {
-  const [isOpened, setIsOpened] = useState(false);
   const [playMusic, setPlayMusic] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "pink">("pink");
-  const [activeFlowerIndex, setActiveFlowerIndex] = useState<number | null>(null);
+  const [galleryFallbacks, setGalleryFallbacks] = useState<Record<number, boolean>>({});
 
-  // Apply theme to document element
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "dark" ? "pink" : "dark"));
-  };
-
-  // Handle intersection observer for scroll reveals
-  useEffect(() => {
-    if (!isOpened) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const elements = document.querySelectorAll(".reveal-card");
-    elements.forEach((el) => observer.observe(el));
-
-    return () => {
-      elements.forEach((el) => observer.unobserve(el));
-    };
-  }, [isOpened]);
-
-  const handleOpenGift = () => {
-    setIsOpened(true);
-    setPlayMusic(true);
-  };
-
-  const handleScrollToMessage = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const scrollToSection = (id: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    const target = document.getElementById("message");
+    const target = document.getElementById(id);
     if (target) {
       target.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   return (
-    <div className="relative min-h-screen selection:bg-[#ff96b4] selection:text-[#0e0208]">
-      {/* Theme Toggle Button */}
-      {isOpened && (
-        <button
-          type="button"
-          onClick={toggleTheme}
-          aria-label={theme === "dark" ? "Switch to Sweet Pink theme" : "Switch to Romantic Dark theme"}
-          aria-pressed={theme === "pink"}
-          className="fixed top-4 right-4 sm:top-6 sm:right-6 z-[1900] px-4 py-2 rounded-full glass border border-[var(--surface-card-border)] text-xs font-body tracking-wider text-[var(--accent-primary)] hover:text-[var(--text-primary)] transition-all duration-300 hover:-translate-y-0.5 active:scale-95 shadow-[0_8px_24px_rgba(0,0,0,0.16)] flex items-center gap-2 cursor-pointer"
+    <div className="relative min-h-screen bg-[#090d14] text-[#f3efe7] pb-28">
+      {/* Subtle Ambient Observatory Backdrop */}
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 65% 40% at 50% 0%, rgba(226, 168, 86, 0.08) 0%, transparent 70%), radial-gradient(ellipse 50% 35% at 85% 90%, rgba(24, 34, 51, 0.55) 0%, transparent 70%)",
+        }}
+      />
+
+      {/* Minimal Header */}
+      <header className="sticky top-0 z-40 border-b border-[#243044]/70 bg-[#090d14]/85 backdrop-blur-md">
+        <nav
+          aria-label="Navigasi utama"
+          className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between"
         >
-          {theme === "dark" ? (
-            <>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-              </svg>
-              <span>Sweet Pink</span>
-            </>
-          ) : (
-            <>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-              </svg>
-              <span>Romantic Dark</span>
-            </>
-          )}
-        </button>
-      )}
-      {/* Intro Scene / Unopened state */}
-      {!isOpened && <GiftBox onOpen={handleOpenGift} />}
+          <a
+            href="#hero"
+            onClick={scrollToSection("hero")}
+            className="font-display italic text-lg text-[#f3efe7] hover:text-[#e2a856] transition-colors"
+          >
+            buat dutdut
+          </a>
 
-      {/* Global Background Layer */}
-      <div id="global-bg-layer" aria-hidden="true" />
-      <div className="cinematic-vignette" aria-hidden="true" />
+          <div className="flex items-center gap-5 sm:gap-7 font-mono text-xs uppercase tracking-[0.12em] text-[#9aa6b8]">
+            <a href="#orbit" onClick={scrollToSection("orbit")} className="hover:text-[#e2a856] transition-colors">
+              Orbit
+            </a>
+            <a href="#letter" onClick={scrollToSection("letter")} className="hover:text-[#e2a856] transition-colors">
+              Surat
+            </a>
+            <a href="#timeline" onClick={scrollToSection("timeline")} className="hover:text-[#e2a856] transition-colors">
+              Jejak
+            </a>
+            <a href="#memories" onClick={scrollToSection("memories")} className="hover:text-[#e2a856] transition-colors">
+              Galeri
+            </a>
+          </div>
+        </nav>
+      </header>
 
-      {/* Falling Petals Canvas (Starts after opening gift box) */}
-      {isOpened && (
-        <>
-          <PetalCanvas count={45} isFixed={true} speed={0.4} />
-          <CursorTrail />
-          <MusicPlayer isAutoPlay={playMusic} />
-        </>
-      )}
+      <MusicPlayer isAutoPlay={playMusic} />
 
-      {/* Main Website Surprises */}
-      <main id="main-site" className={`${isOpened ? "entering block" : "hidden"}`}>
-
+      <main className="relative z-10">
         {/* ===== HERO SECTION ===== */}
-        <section id="hero" className="flex items-center justify-center min-h-screen text-center">
-          <div className="hero-content w-full">
-            <h1 className="hero-title">
-              <span className="line1 font-display">Happy Anniversary,</span>
-              <span className="line2 italic font-display">Dutdut</span>
+        <section id="hero" className="min-h-[88vh] flex items-center justify-center px-4 sm:px-6 py-20 text-center">
+          <div className="max-w-3xl mx-auto w-full">
+            <h1 className="font-display text-5xl sm:text-7xl md:text-8xl font-normal tracking-[-0.02em] leading-[1.05] text-[#f3efe7]">
+              buat <em className="italic text-[#e2a856]">dutdut</em>
             </h1>
-            <p className="hero-sub">
-              Jaja &amp; Dutdut — Hari demi hari kita lalui bersama, dan setiap detiknya adalah bagian terindah dalam hidup akuu cayangg.
+
+            <p className="font-body text-base sm:text-lg text-[#9aa6b8] max-w-xl mx-auto mt-6 leading-relaxed">
+              Jaja &amp; Dutdut — hari demi hari kita lalui bersama, dan setiap detiknya adalah bagian terindah dalam hidup akuu cayangg.
             </p>
 
             <CountdownTimer />
 
-            <div className="hero-flowers mt-6">
-              <svg className="hero-flower" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <g className="flower-group">
-                  <ellipse cx="50" cy="30" rx="12" ry="22" fill="rgba(255,182,193,0.85)" className="petal p1" />
-                  <ellipse cx="50" cy="30" rx="12" ry="22" fill="rgba(255,182,193,0.85)" className="petal p2" transform="rotate(60,50,50)" />
-                  <ellipse cx="50" cy="30" rx="12" ry="22" fill="rgba(255,182,193,0.85)" className="petal p3" transform="rotate(120,50,50)" />
-                  <ellipse cx="50" cy="30" rx="12" ry="22" fill="rgba(255,192,203,0.85)" className="petal p4" transform="rotate(180,50,50)" />
-                  <ellipse cx="50" cy="30" rx="12" ry="22" fill="rgba(255,192,203,0.85)" className="petal p5" transform="rotate(240,50,50)" />
-                  <ellipse cx="50" cy="30" rx="12" ry="22" fill="rgba(255,192,203,0.85)" className="petal p6" transform="rotate(300,50,50)" />
-                  <circle cx="50" cy="50" r="10" fill="rgba(255,220,180,0.95)" />
-                </g>
-              </svg>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <a
+                href="#orbit"
+                onClick={scrollToSection("orbit")}
+                className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#e2a856] text-[#090d14] font-body text-sm font-semibold tracking-wide hover:bg-[#f5cd82] transition-colors"
+              >
+                <span>Jelajahi Orbit 3D</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M12 5v14M19 12l-7 7-7-7" />
+                </svg>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => setPlayMusic(true)}
+                className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full border border-[#243044] bg-[#111824] text-[#f3efe7] font-body text-sm font-medium hover:border-[#e2a856] transition-colors cursor-pointer"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polygon points="6 4 20 12 6 20 6 4" />
+                </svg>
+                <span>Putar Lagu</span>
+              </button>
             </div>
-
-            <a href="#message" onClick={handleScrollToMessage} className="scroll-btn cursor-pointer">
-              <span>Discover our anniversary surprise</span>
-              <div className="scroll-arrow">↓</div>
-            </a>
           </div>
         </section>
 
-        {/* ===== MESSAGE SECTION ===== */}
-        <section id="message" className="relative">
-          <div className="section-inner">
-            <InteractiveCard maxRotateX={5} maxRotateY={5} scale={1.01}>
-              <div className="message-card surface-tonal">
-                <p className="msg-label">Dibacaaaa, awas aja kalo ga dibaca, tau ko lebay</p>
-                <h2 className="msg-title">
-                  Menapaki Setiap Detik<br />
-                  <em>Melangkah Bersama</em><br />
-                  Menulis Cerita Kita.
-                </h2>
-                <p className="msg-body">
-                  Sejak hari pertama kita melangkah bersama, setiap momen yang kita lalui telah terukir menjadi melodi terindah dalam hidup akuu. Kita telah melewati banyak hal banget yaa hahaha dari menertawakan hal-hal kecil, hingga saling mendekap erat untuk menenangkan badai yang sesekali datang menghampiri. Kamu bukan sekadar seseorang yang mendampingi akuu kamu adalah rumah tempat ternyaman buat aku.
-                </p>
-                <p className="msg-body">
-                  Hubungan kita bukan hanya tentang hari hari yang menyenangkan, melainkan tentang bagaimana kita tetap memilih satu sama lain bahkan saat keadaan terasa sulit. Aku bersyukur atas setiap proses pendewasaan yang kita lalui bersama, bagaimana kita belajar mengalah, memahami keheningan masing masing, dan bangkit kembali dengan cinta yang lebih matang.
-                </p>
-                <p className="msg-body">
-                  Terima kasih udahh ngasih aku kesempatan ber kali kali dengan begitu tulus dan sabar. Terima kasih telah menjadi bagian terbaik dari cerita hidup aku. Happy anniversary, sayangku, cintakuuuu. Semoga kitaaa bisa melewati badai badai yang akan datang nantii yaaaa, aku harap kamu selamanya sama akuuu.
-                </p>
-                <div className="msg-signature">— You and I</div>
-              </div>
-            </InteractiveCard>
-          </div>
-
-          <div className="section-petals">
-            <div className="s-petal sp1">🌸</div>
-            <div className="s-petal sp2">🌺</div>
-            <div className="s-petal sp3">🌼</div>
-            <div className="s-petal sp4">🌸</div>
-            <div className="s-petal sp5">🌷</div>
-          </div>
-        </section>
-
-        {/* ===== LOVELOOM ORBIT SECTION ===== */}
-        <section id="loveloom" className="relative">
-          <div className="section-inner">
-            <h2 className="section-title">
-              Pusat Gravitasi<br />
-              <em>Semesta Cintaku</em>
+        {/* ===== 3D PLANETARIUM SECTION ===== */}
+        <section id="orbit" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[#243044]/60">
+          <div className="max-w-5xl mx-auto text-center">
+            <h2 className="font-display text-3xl sm:text-5xl text-[#f3efe7] mb-3">
+              Pusat Gravitasi <em className="italic text-[#e2a856]">Semesta Kita</em>
             </h2>
             <LoveLoomOrbit />
           </div>
         </section>
 
+        {/* ===== LETTER SECTION ===== */}
+        <section id="letter" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[#243044]/60">
+          <div className="max-w-2xl mx-auto">
+            <article className="observatory-surface p-7 sm:p-11">
+              <p className="font-mono text-xs uppercase tracking-[0.14em] text-[#e2a856] mb-4">
+                Dibacaaaa, awas aja kalo ga dibaca, tau ko lebay
+              </p>
+
+              <h2 className="font-display text-3xl sm:text-4xl text-[#f3efe7] leading-snug mb-8">
+                Menapaki Setiap Detik,{" "}
+                <em className="italic text-[#e2a856]">Melangkah Bersama,</em>{" "}
+                Menulis Cerita Kita.
+              </h2>
+
+              <div className="space-y-5 font-body text-[#9aa6b8] text-base leading-[1.8]">
+                <p>
+                  Sejak hari pertama kita melangkah bersama, setiap momen yang kita lalui telah terukir menjadi melodi terindah dalam hidup akuu. Kita telah melewati banyak hal banget yaa hahaha dari menertawakan hal-hal kecil, hingga saling mendekap erat untuk menenangkan badai yang sesekali datang menghampiri. Kamu bukan sekadar seseorang yang mendampingi akuu, kamu adalah rumah tempat ternyaman buat aku.
+                </p>
+                <p>
+                  Hubungan kita bukan hanya tentang hari-hari yang menyenangkan, melainkan tentang bagaimana kita tetap memilih satu sama lain bahkan saat keadaan terasa sulit. Aku bersyukur atas setiap proses pendewasaan yang kita lalui bersama, bagaimana kita belajar mengalah, memahami keheningan masing-masing, dan bangkit kembali dengan cinta yang lebih matang.
+                </p>
+                <p>
+                  Terima kasih udahh ngasih aku kesempatan berkali-kali dengan begitu tulus dan sabar. Terima kasih telah menjadi bagian terbaik dari cerita hidup aku. Semoga kitaaa bisa melewati badai-badai yang akan datang nantii yaaaa, aku harap kamu selamanya sama akuuu.
+                </p>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-[#243044] font-display italic text-xl text-[#e2a856]">
+                — You and I
+              </div>
+            </article>
+          </div>
+        </section>
+
         {/* ===== TIMELINE SECTION ===== */}
-        <section id="timeline" className="relative">
-          <div className="section-inner">
-            <h2 className="section-title">
-              Perjalanan Indah<br />
-              <em>Yang Kita Lewati Bersama</em>
+        <section id="timeline" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[#243044]/60">
+          <div className="max-w-5xl mx-auto text-center">
+            <h2 className="font-display text-3xl sm:text-5xl text-[#f3efe7] mb-12">
+              Perjalanan Indah <em className="italic text-[#e2a856]">Yang Kita Lewati</em>
             </h2>
             <TimelineMilestones />
           </div>
         </section>
 
-        {/* ===== REASONS SECTION ===== */}
-        <section id="reasons">
-          <div className="section-inner">
-            <h2 className="section-title">What I Cherish About Us</h2>
+        {/* ===== CHERISHED QUALITIES SECTION ===== */}
+        <section id="qualities" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[#243044]/60">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="font-display text-3xl sm:text-5xl text-[#f3efe7] text-center mb-14">
+              What I Cherish About Us
+            </h2>
 
-            <ol className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 max-w-4xl mx-auto mt-10 text-left list-none p-0">
-              {CELEBRATE_CARDS.map((card, i) => (
+            <ol className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 list-none p-0">
+              {CHERISHED_NOTES.map((item, i) => (
                 <li
                   key={i}
-                  className={`reveal-card ${card.delayClass} pt-5 border-t border-[var(--surface-card-border)] flex flex-col gap-2`}
+                  className="pt-5 border-t border-[#243044] flex flex-col gap-2"
                 >
                   <div className="flex items-baseline gap-3">
-                    <span className="font-display italic text-lg text-[var(--accent-primary)]">
+                    <span className="font-mono text-xs text-[#e2a856]">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <h3 className="font-display text-2xl font-normal text-[var(--text-primary)]">
-                      {card.title}
+                    <h3 className="font-display text-2xl text-[#f3efe7]">
+                      {item.title}
                     </h3>
                   </div>
-                  <p className="font-body text-sm font-light leading-relaxed text-[var(--text-secondary)] pl-8">
-                    {card.text}
+                  <p className="font-body text-sm leading-relaxed text-[#9aa6b8] pl-7">
+                    {item.text}
                   </p>
                 </li>
               ))}
@@ -276,101 +220,54 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ===== GARDEN SECTION ===== */}
-        <section id="garden">
-          <div className="garden-bg" />
-          <div className="section-inner">
-            <h2 className="section-title garden-title">
-              A Garden Blooming<br />
-              <em>For Our Love Today</em>
+        {/* ===== MEMORIES GALLERY SECTION ===== */}
+        <section id="memories" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[#243044]/60">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="font-display text-3xl sm:text-5xl text-[#f3efe7] text-center mb-12">
+              Our Beautiful <em className="italic text-[#e2a856]">Pictures</em>
             </h2>
 
-            <div className="flower-garden">
-              {GARDEN_FLOWERS.map((flower, i) => {
-                const isActive = activeFlowerIndex === i;
-                return (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => setActiveFlowerIndex(isActive ? null : i)}
-                    aria-label={`${flower.name}: ${flower.wish}`}
-                    aria-expanded={isActive}
-                    className={`garden-flower ${flower.class} ${isActive ? "is-active" : ""} bg-transparent border-0 p-0 cursor-pointer`}
-                  >
-                    <div className="gf-bloom" aria-hidden="true">{flower.emoji}</div>
-                    <div className="gf-stem" aria-hidden="true" />
-                    <div className="gf-tooltip glass">
-                      <strong>{flower.name}</strong>
-                      <span>{flower.wish}</span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            <p className="garden-note">💖 hover or tap each flower — an anniversary wish is hiding inside ✨</p>
-          </div>
-        </section>
-
-        {/* ===== MEMORIES SECTION ===== */}
-        <section id="memories">
-          <div className="section-inner">
-            <h2 className="section-title">
-              Our Beautiful<br />
-              <em>Pictures</em>
-            </h2>
-
-            <div className="gallery-grid">
-              <InteractiveCard className="gallery-card surface-tonal gc1" maxRotateX={4} maxRotateY={4}>
-                <img src="/assets/images/img1.jpeg" className="gallery-img w-full object-cover aspect-square" alt="Jaja and Dutdut — our" />
-                <div className="gallery-caption">our</div>
-              </InteractiveCard>
-
-              <InteractiveCard className="gallery-card surface-tonal gc2" maxRotateX={4} maxRotateY={4}>
-                <img src="/assets/images/img2.jpeg" className="gallery-img w-full object-cover aspect-square" alt="Jaja and Dutdut — beautiful" />
-                <div className="gallery-caption">beautiful</div>
-              </InteractiveCard>
-
-              <InteractiveCard className="gallery-card surface-tonal gc3" maxRotateX={4} maxRotateY={4}>
-                <img src="/assets/images/img3.jpeg" className="gallery-img w-full object-cover aspect-square" alt="Jaja and Dutdut — journey" />
-                <div className="gallery-caption">journey</div>
-              </InteractiveCard>
-
-              <InteractiveCard className="gallery-card surface-tonal gc4" maxRotateX={4} maxRotateY={4}>
-                <img src="/assets/images/img4.jpeg" className="gallery-img w-full object-cover aspect-square" alt="Jaja and Dutdut — together" />
-                <div className="gallery-caption">together</div>
-              </InteractiveCard>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {GALLERY_ITEMS.map((item, idx) => (
+                <figure
+                  key={idx}
+                  className="observatory-surface overflow-hidden flex flex-col"
+                >
+                  <div className="aspect-square w-full bg-[#182233] overflow-hidden">
+                    <img
+                      src={galleryFallbacks[idx] ? item.fallback : item.src}
+                      alt={`Jaja dan Dutdut — ${item.caption}`}
+                      onError={() =>
+                        setGalleryFallbacks((prev) => ({ ...prev, [idx]: true }))
+                      }
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                  <figcaption className="px-4 py-3 font-display italic text-lg text-[#f3efe7] border-t border-[#243044] text-center">
+                    {item.caption}
+                  </figcaption>
+                </figure>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* ===== FINALE SECTION ===== */}
-        <section id="finale">
-          {/* Internal relative canvas petal rain just for finale section background */}
-          <div className="absolute inset-0 z-0 opacity-40 overflow-hidden pointer-events-none">
-            <PetalCanvas count={15} isFixed={false} speed={0.2} />
-          </div>
-
-          <div className="finale-inner">
-            <h2 className="finale-title">
-              Dutdut Balaga,<br />
-              <em>Jaja Baik</em>
+        {/* ===== CLOSING SECTION ===== */}
+        <section id="closing" className="py-24 px-4 sm:px-6 border-t border-[#243044]/60 text-center">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="font-display text-4xl sm:text-5xl text-[#f3efe7] mb-6">
+              Dutdut Balaga, <em className="italic text-[#e2a856]">Jaja Baik</em>
             </h2>
 
-            <p className="finale-body">
-              Di hari yang istimewa ini, aku ingin kamu tahu bahwa mencintaimu dan melangkah bersamamu adalah petualangan terbaik dalam hidup akuuuu. Setiap tahun yang kita habiskan bersama adalah anugerah terindah bagi akuuu. Setiap tawa, setiap pelukan hangat, dan setiap detak jantung kita yang beriringan. Happy anniversary,cintaku. 🌸
+            <p className="font-body text-[#9aa6b8] text-base leading-relaxed mb-8">
+              Di hari yang istimewa ini, aku ingin kamu tahu bahwa mencintaimu dan melangkah bersamamu adalah petualangan terbaik dalam hidup akuuuu. Setiap tahun yang kita habiskan bersama adalah anugerah terindah bagi akuuu. Setiap tawa, setiap pelukan hangat, dan setiap detak jantung kita yang beriringan.
             </p>
 
-            <div className="finale-heart">
-              <div className="heart-pulse text-6xl">💗</div>
-            </div>
-
-            <p className="finale-sig">kamu baong</p>
+            <p className="font-display italic text-2xl text-[#e2a856]">
+              kamu baong
+            </p>
           </div>
         </section>
-
-        {/* ===== FOOTER ===== */}
-
       </main>
     </div>
   );

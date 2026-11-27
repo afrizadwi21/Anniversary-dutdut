@@ -1,169 +1,113 @@
 @import "tailwindcss";
 
 :root {
-  --background: #180410;
-  --foreground: #fff8f3;
-
-  /* Semantic Design System Tokens (Romantic Dark default) */
-  --text-primary: rgba(255, 240, 245, 0.98);
-  --text-secondary: rgba(255, 200, 220, 0.82);
-  --text-muted: rgba(255, 190, 210, 0.68);
-  --accent-primary: #ff96b4;
-  --accent-ring: #ff96b4;
-  --surface-card: rgba(255, 255, 255, 0.055);
-  --surface-card-border: rgba(244, 114, 182, 0.28);
+  --obsidian-bg: #090d14;
+  --slate-surface: #111824;
+  --slate-elevated: #182233;
+  --parchment-ink: #f3efe7;
+  --silver-muted: #9aa6b8;
+  --amber-accent: #e2a856;
+  --amber-bright: #f5cd82;
+  --border-hairline: #243044;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Map original site font variables to Next.js local fonts */
-  --ff-display: var(--font-cormorant), serif;
-  --ff-script: var(--font-cormorant), serif;
-  --ff-body: var(--font-raleway), sans-serif;
+  --ff-display: var(--font-display), Georgia, serif;
+  --ff-body: var(--font-body), system-ui, -apple-system, sans-serif;
+  --ff-mono: var(--font-mono), monospace;
 }
 
-[data-theme="pink"] {
-  --background: #ffeef2;
-  --foreground: #4a0e17;
-
-  /* Semantic Design System Tokens (Sweet Pink) */
-  --text-primary: #4a0e17;
-  --text-secondary: #7c243c;
-  --text-muted: #8f334c;
-  --accent-primary: #d9406b;
-  --accent-ring: #d9406b;
-  --surface-card: rgba(255, 255, 255, 0.82);
-  --surface-card-border: rgba(217, 64, 107, 0.32);
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  background-color: var(--obsidian-bg);
+  color: var(--parchment-ink);
 }
 
 body {
   font-family: var(--ff-body);
-  background: var(--background);
-  color: var(--text-primary);
+  background-color: var(--obsidian-bg);
+  color: var(--parchment-ink);
   overflow-x: hidden;
 }
 
-.surface-tonal {
-  background: var(--surface-card);
-  border: 1px solid var(--surface-card-border);
-  border-radius: 24px;
-  box-shadow: var(--glass-shadow);
-  transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s var(--ease-out-expo);
+::selection {
+  background-color: var(--amber-accent);
+  color: var(--obsidian-bg);
 }
 
-/* Accessible focus indicators */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--obsidian-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-hairline);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--amber-accent);
+}
+
 :focus-visible {
-  outline: 2px solid var(--accent-ring);
+  outline: 2px solid var(--amber-accent);
   outline-offset: 2px;
 }
 
-/* Comfortable reading measure for long-form letter & finale copy */
-.msg-body,
-.finale-body {
-  max-width: 65ch;
-  margin-inline: auto;
+.font-display {
+  font-family: var(--ff-display);
 }
 
-/* Support tap/focus reveal on touch & keyboard devices for garden flowers */
-.garden-flower.is-active .gf-tooltip,
-.garden-flower:focus-within .gf-tooltip {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-6px);
-  pointer-events: auto;
+.font-body {
+  font-family: var(--ff-body);
 }
 
-/* Ensure elegant italic styling for Cormorant Garamond elements playing the script/accent role */
-.section-eyebrow,
-.msg-signature,
-.gallery-caption,
-.finale-sig,
-footer p,
-.garden-note,
-.scroll-btn,
-.hero-eyebrow,
-em {
-  font-style: italic !important;
+.font-mono {
+  font-family: var(--ff-mono);
 }
 
-/* ================================================================
-   LOVELOOM GALAXY ORBIT KEYFRAMES & UTILITIES
-   ================================================================ */
-@keyframes orbit-anim {
+/* Tonal observatory card surface */
+.observatory-surface {
+  background-color: var(--slate-surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: 18px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.3s var(--ease-out-expo), box-shadow 0.3s var(--ease-out-expo), transform 0.3s var(--ease-out-expo);
+}
+
+.observatory-surface:hover {
+  border-color: rgba(226, 168, 86, 0.45);
+}
+
+/* Floating chrome for persistent player & dialog */
+.observatory-floating {
+  background-color: rgba(17, 24, 36, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-hairline);
+  box-shadow: 0 18px 48px rgba(4, 6, 11, 0.5);
+}
+
+@keyframes modal-enter {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
   }
   to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes counter-orbit-anim {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(-360deg);
-  }
-}
-
-.animate-orbit {
-  animation: orbit-anim var(--orbit-duration, 20s) linear infinite;
-  animation-delay: var(--orbit-delay, 0s);
-}
-
-.animate-counter-orbit {
-  animation: counter-orbit-anim var(--orbit-duration, 20s) linear infinite;
-  animation-delay: var(--orbit-delay, 0s);
-}
-
-.orbit-paused .animate-orbit,
-.orbit-paused .animate-counter-orbit {
-  animation-play-state: paused;
-}
-
-@keyframes float-gentle-anim {
-  0%, 100% {
+    opacity: 1;
     transform: translateY(0) scale(1);
   }
-  50% {
-    transform: translateY(-4px) scale(1.03);
-  }
 }
 
-.animate-float-gentle {
-  animation: float-gentle-anim 3.5s ease-in-out infinite;
-}
-
-@keyframes scale-up-anim {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.animate-scale-up {
-  animation: scale-up-anim 0.35s var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)) forwards;
-}
-
-.animate-spin-slow {
-  animation: orbit-anim 25s linear infinite;
+.animate-modal-enter {
+  animation: modal-enter 0.35s var(--ease-out-expo) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-orbit,
-  .animate-counter-orbit,
-  .animate-float-gentle,
-  .animate-spin-slow,
-  .animate-pulse,
-  .animate-ping {
-    animation: none !important;
+  html {
+    scroll-behavior: auto;
   }
-
-  .reveal-card {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
+  .animate-modal-enter {
+    animation: none !important;
   }
 }

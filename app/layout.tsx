@@ -1,28 +1,29 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Raleway } from "next/font/google";
+import { Baskervville, Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import "../temp_assets/css/animations.css";
-import "../temp_assets/css/style.css";
-import "../temp_assets/css/dark-romantic.css";
-import "../temp_assets/css/performance.css";
-import "../temp_assets/css/gpu-optimization.css";
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+const baskervville = Baskervville({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: ["300", "400", "600"],
+  weight: ["400"],
   style: ["normal", "italic"],
 });
 
-const raleway = Raleway({
-  variable: "--font-raleway",
+const manrope = Manrope({
+  variable: "--font-body",
   subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600"],
+  weight: ["300", "400", "500", "600"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-  title: "Anniversary Terus — Happy Anniversary, My Everything 💖",
-  description: "Our anniversary serenade in bloom",
+  title: "buat dutdut",
+  description: "Untuk Dutdut — catatan kecil, semesta kita, dan lagu yang selalu menemani.",
 };
 
 export default function RootLayout({
@@ -32,10 +33,10 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`${cormorant.variable} ${raleway.variable} h-full antialiased`}
+      lang="id"
+      className={`${baskervville.variable} ${manrope.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#090d14] text-[#f3efe7]">{children}</body>
     </html>
   );
 }

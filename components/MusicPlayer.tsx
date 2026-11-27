@@ -2,16 +2,6 @@
 
 import React, { useRef, useState, useEffect } from "react";
 
-interface Note {
-  id: number;
-  char: string;
-  left: number;
-  size: number;
-  duration: number;
-}
-
-const MUSICAL_NOTES = ["♫", "♪", "♬", "♩", "🎶"];
-
 export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boolean }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -21,14 +11,12 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.8);
-  const [notes, setNotes] = useState<Note[]>([]);
-  const noteIdCounter = useRef(0);
+  const [coverFallback, setCoverFallback] = useState(false);
 
-  // Initialize audio volume and load metadata
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -38,7 +26,7 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
     const onLoadedMetadata = () => setDuration(audio.duration || 0);
     const onEnded = () => {
       audio.currentTime = 0;
-      audio.play();
+      audio.play().catch(() => {});
     };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
@@ -49,55 +37,22 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
       audio.removeEventListener("ended", onEnded);
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
   }, []);
 
-  // Sync volume state
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
     }
   }, [volume]);
 
-  // Handle Autoplay trigger from Gift Box open
   useEffect(() => {
     if (isAutoPlay) {
-      // Small timeout to guarantee browser interaction unlock registers
-      setTimeout(() => {
-        handlePlay();
-      }, 100);
+      handlePlay();
     }
   }, [isAutoPlay]);
 
-  // Floating music notes generator
-  useEffect(() => {
-    if (!isPlaying) {
-      setNotes([]);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      const id = noteIdCounter.current++;
-      const newNote: Note = {
-        id,
-        char: MUSICAL_NOTES[Math.floor(Math.random() * MUSICAL_NOTES.length)],
-        left: Math.random() * 40 - 20, // offset centered around button
-        size: Math.random() * 10 + 12, // 12px to 22px
-        duration: Math.random() * 1.5 + 1.5, // 1.5s to 3s
-      };
-
-      setNotes((prev) => [...prev.slice(-15), newNote]);
-
-      // clean up note after animation completes
-      setTimeout(() => {
-        setNotes((prev) => prev.filter((n) => n.id !== id));
-      }, newNote.duration * 1000);
-    }, 600);
-
-    return () => clearInterval(interval);
-  }, [isPlaying]);
-
-  // Web Audio Visualizer setup
   const initVisualizer = () => {
     const audio = audioRef.current;
     const canvas = canvasRef.current;
@@ -105,10 +60,10 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
 
     if (!audioContextRef.current) {
       try {
-        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+        const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
         const ctx = new AudioContextClass();
         const analyser = ctx.createAnalyser();
-        analyser.fftSize = 64; // small fft for clean visualizer waves
+        analyser.fftSize = 64;
 
         const source = ctx.createMediaElementSource(audio);
         source.connect(analyser);
@@ -117,61 +72,47 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
         audioContextRef.current = ctx;
         analyserRef.current = analyser;
         sourceRef.current = source;
-      } catch (err) {
-        console.error("Failed to initialize Web Audio API:", err);
+      } catch {
         return;
       }
     }
 
-    const ctxState = audioContextRef.current;
-    if (ctxState && ctxState.state === "suspended") {
-      ctxState.resume();
+    if (audioContextRef.current.state === "suspended") {
+      audioContextRef.current.resume();
     }
 
     const analyser = analyserRef.current;
-    if (!analyser) return;
-
     const canvasCtx = canvas.getContext("2d");
-    if (!canvasCtx) return;
+    if (!analyser || !canvasCtx) return;
 
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
     const render = () => {
-      if (!canvasCtx || !canvas) return;
       const w = canvas.width;
       const h = canvas.height;
-
       analyser.getByteFrequencyData(dataArray);
-
       canvasCtx.clearRect(0, 0, w, h);
 
-      // Create beautiful soft rose gradient for visualizer
       const gradient = canvasCtx.createLinearGradient(0, 0, w, 0);
-      gradient.addColorStop(0, "rgba(232, 105, 138, 0.4)");
-      gradient.addColorStop(0.5, "rgba(255, 160, 190, 0.85)");
-      gradient.addColorStop(1, "rgba(232, 105, 138, 0.4)");
-
+      gradient.addColorStop(0, "rgba(226, 168, 86, 0.45)");
+      gradient.addColorStop(0.5, "rgba(245, 205, 130, 0.9)");
+      gradient.addColorStop(1, "rgba(226, 168, 86, 0.45)");
       canvasCtx.fillStyle = gradient;
 
       const barWidth = (w / bufferLength) * 1.5;
-      let barHeight;
       let x = 0;
 
       for (let i = 0; i < bufferLength; i++) {
-        // scale frequency to canvas height
-        barHeight = (dataArray[i] / 255) * h * 0.85;
-
-        // Draw symmetrical rounded bars
+        const barHeight = (dataArray[i] / 255) * h * 0.85;
         const y = h - barHeight;
         canvasCtx.beginPath();
         if (canvasCtx.roundRect) {
-          canvasCtx.roundRect(x, y, barWidth - 2, barHeight, 3);
+          canvasCtx.roundRect(x, y, Math.max(2, barWidth - 2), barHeight, 2);
         } else {
-          canvasCtx.rect(x, y, barWidth - 2, barHeight);
+          canvasCtx.rect(x, y, Math.max(2, barWidth - 2), barHeight);
         }
         canvasCtx.fill();
-
         x += barWidth;
       }
 
@@ -186,12 +127,15 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.play().then(() => {
-      setIsPlaying(true);
-      initVisualizer();
-    }).catch((err) => {
-      console.warn("Audio autoplay blocked or failed:", err);
-    });
+    audio
+      .play()
+      .then(() => {
+        setIsPlaying(true);
+        initVisualizer();
+      })
+      .catch(() => {
+        setIsPlaying(false);
+      });
   };
 
   const handlePause = () => {
@@ -199,17 +143,12 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
     if (!audio) return;
     audio.pause();
     setIsPlaying(false);
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
-    }
+    if (animationRef.current) cancelAnimationFrame(animationRef.current);
   };
 
   const togglePlay = () => {
-    if (isPlaying) {
-      handlePause();
-    } else {
-      handlePlay();
-    }
+    if (isPlaying) handlePause();
+    else handlePlay();
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -231,44 +170,24 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
     <>
       <audio ref={audioRef} src="/music/song1.mp3" preload="auto" loop />
 
-      {/* Floating Notes Container */}
-      <div
-        className="fixed bottom-[90px] right-[28px] z-[999] pointer-events-none"
-        style={{ width: "60px", height: "150px" }}
-      >
-        {notes.map((n) => (
-          <div
-            key={n.id}
-            className="absolute bottom-0 text-[#ff96b4]/85 animate-float-note pointer-events-none select-none font-bold"
-            style={{
-              left: `${50 + n.left}%`,
-              fontSize: `${n.size}px`,
-              animation: `float-note-anim ${n.duration}s ease-out forwards`,
-            }}
-          >
-            {n.char}
-          </div>
-        ))}
-      </div>
-
-      {/* Floating Toggle Button (Bottom Right) */}
+      {/* Floating Toggle Button */}
       <button
         type="button"
         onClick={() => {
-          setIsOpen(!isOpen);
-          // Resume audio context if it was suspended on user gesture
+          setIsOpen((o) => !o);
           if (audioContextRef.current && audioContextRef.current.state === "suspended") {
             audioContextRef.current.resume();
           }
         }}
         aria-expanded={isOpen}
-        aria-label={isOpen ? "Close Music Player" : "Open Music Player"}
-        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14 rounded-full glass z-[999] flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_8px_24px_rgba(0,0,0,0.25)] text-[var(--accent-primary)] ${isPlaying ? "border-[var(--accent-primary)] border" : "border-white/20 border"
-          }`}
+        aria-label={isOpen ? "Tutup pemutar musik" : "Buka pemutar musik"}
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-12 h-12 rounded-full observatory-floating z-[999] flex items-center justify-center cursor-pointer transition-all duration-300 hover:border-[#e2a856] active:scale-95 ${
+          isPlaying ? "border-[#e2a856] text-[#e2a856]" : "text-[#f3efe7]"
+        }`}
       >
         <svg
-          width="22"
-          height="22"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -276,7 +195,6 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden="true"
-          className={isPlaying ? "animate-[spin_6s_linear_infinite]" : ""}
         >
           <path d="M9 18V5l12-2v13" />
           <circle cx="6" cy="18" r="3" />
@@ -284,32 +202,33 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
         </svg>
       </button>
 
-      {/* Main Music Player Panel (Slides from Left) */}
+      {/* Music Player Panel */}
       <div
-        className={`fixed bottom-4 left-4 sm:bottom-6 sm:left-6 w-[calc(100vw-6.5rem)] sm:w-[320px] glass p-4 z-[990] flex flex-col gap-3 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen
-          ? "translate-x-0 opacity-100 pointer-events-auto"
-          : "-translate-x-10 opacity-0 pointer-events-none"
-          }`}
+        className={`fixed bottom-4 left-4 sm:bottom-6 sm:left-6 w-[calc(100vw-5.5rem)] sm:w-[320px] observatory-floating rounded-[18px] p-4 z-[990] flex flex-col gap-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isOpen
+            ? "translate-y-0 opacity-100 pointer-events-auto"
+            : "translate-y-4 opacity-0 pointer-events-none"
+        }`}
       >
         {/* Track Details */}
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-lg overflow-hidden relative border border-white/10 shrink-0">
+          <div className="w-11 h-11 rounded-[10px] overflow-hidden border border-[#243044] shrink-0 bg-[#182233]">
             <img
-              src="/assets/images/img1.jpeg"
-              alt="Song Cover"
-              className={`w-full h-full object-cover ${isPlaying ? "animate-[spin_8s_linear_infinite]" : ""}`}
+              src={coverFallback ? "/assets/dummy/memory-1.svg" : "/assets/images/img1.jpeg"}
+              alt="You and I — One Direction"
+              onError={() => setCoverFallback(true)}
+              className="w-full h-full object-cover"
             />
           </div>
           <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-white text-sm font-medium truncate tracking-wide">You and I</span>
-            <span className="text-[#ffc8dc]/70 text-xs truncate font-light mt-0.5">One Direction</span>
+            <span className="text-[#f3efe7] text-sm font-medium truncate">You and I</span>
+            <span className="text-[#9aa6b8] text-xs truncate mt-0.5">One Direction</span>
           </div>
-          {/* Active Audio Visualizer Canvas */}
           <canvas
             ref={canvasRef}
             width={60}
             height={24}
-            className="w-[60px] h-6 shrink-0 opacity-80"
+            className="w-[60px] h-6 shrink-0 opacity-90"
           />
         </div>
 
@@ -322,43 +241,41 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
             value={currentTime}
             onChange={handleSeek}
             aria-label="Seek audio timeline"
-            className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#ff96b4] hover:accent-[#ffc8dc]"
+            className="w-full h-1 bg-[#243044] rounded-lg appearance-none cursor-pointer accent-[#e2a856]"
           />
-          <div className="flex justify-between text-xs text-[#ffc8dc]/60 font-light mt-0.5">
+          <div className="flex justify-between font-mono text-xs text-[#9aa6b8] mt-0.5">
             <span>{formatTime(currentTime)}</span>
             <span>{formatTime(duration)}</span>
           </div>
         </div>
 
-        {/* Controls Layout */}
-        <div className="flex items-center justify-between mt-1">
-          {/* Left: Playback toggles */}
-          <div className="flex items-center gap-4">
+        {/* Controls */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={togglePlay}
-              aria-label={isPlaying ? "Pause music" : "Play music"}
-              className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
+              aria-label={isPlaying ? "Jeda lagu" : "Putar lagu"}
+              className="w-9 h-9 rounded-full bg-[#182233] border border-[#243044] hover:border-[#e2a856] flex items-center justify-center text-[#f3efe7] active:scale-95 transition-all cursor-pointer"
             >
               {isPlaying ? (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <rect x="6" y="5" width="4" height="14" rx="1" />
                   <rect x="14" y="5" width="4" height="14" rx="1" />
                 </svg>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <polygon points="7 4 20 12 7 20 7 4" />
                 </svg>
               )}
             </button>
-            <span className="text-xs text-white/80 select-none">
-              {isPlaying ? "Playing Serenade..." : "Paused"}
+            <span className="font-mono text-xs text-[#9aa6b8] select-none">
+              {isPlaying ? "PLAYING" : "PAUSED"}
             </span>
           </div>
 
-          {/* Right: Volume control slider */}
-          <div className="flex items-center gap-2 max-w-[90px]">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--text-secondary)] shrink-0" aria-hidden="true">
+          <div className="flex items-center gap-2 max-w-[96px]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="text-[#9aa6b8] shrink-0" aria-hidden="true">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
               <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
             </svg>
@@ -370,29 +287,11 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
               value={volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
               aria-label="Audio volume"
-              className="w-16 h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#ff96b4]"
+              className="w-16 h-1 bg-[#243044] rounded-lg appearance-none cursor-pointer accent-[#e2a856]"
             />
           </div>
         </div>
       </div>
-
-      {/* Injected animations specifically for floating notes */}
-      <style jsx global>{`
-        @keyframes float-note-anim {
-          0% {
-            opacity: 0;
-            transform: translate3d(0, 0, 0) scale(0.6) rotate(0deg);
-          }
-          15% {
-            opacity: 1;
-            transform: translate3d(var(--x-mid, -10px), -30px, 0) scale(1.1) rotate(15deg);
-          }
-          100% {
-            opacity: 0;
-            transform: translate3d(var(--x-end, 15px), -120px, 0) scale(0.7) rotate(-30deg);
-          }
-        }
-      `}</style>
     </>
   );
 }

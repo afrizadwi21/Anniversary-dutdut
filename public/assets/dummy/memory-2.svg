@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <defs>
+    <radialGradient id="g2" cx="65%" cy="35%" r="75%">
+      <stop offset="0%" stop-color="#2c3548"/>
+      <stop offset="60%" stop-color="#111824"/>
+      <stop offset="100%" stop-color="#090d14"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#g2)"/>
+  <ellipse cx="300" cy="280" rx="185" ry="62" transform="rotate(-18 300 280)" fill="none" stroke="#e2a856" stroke-opacity="0.45" stroke-width="1.5"/>
+  <circle cx="300" cy="280" r="78" fill="#182233" stroke="#e2a856" stroke-opacity="0.5" stroke-width="1.5"/>
+  <circle cx="275" cy="255" r="24" fill="#f5cd82" fill-opacity="0.16"/>
+  <text x="300" y="505" text-anchor="middle" fill="#f3efe7" font-family="Georgia, serif" font-size="22" letter-spacing="2">02 / MAM SEBLAK</text>
+  <text x="300" y="535" text-anchor="middle" fill="#9aa6b8" font-family="monospace" font-size="12" letter-spacing="3">DUMMY PHOTO — REPLACE LATER</text>
+</svg>
