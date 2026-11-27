@@ -37,8 +37,8 @@ export default function MusicPlayer({
   const activeCueRef = useRef<HTMLButtonElement | null>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
-  const [showLyrics, setShowLyrics] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [showLyrics, setShowLyrics] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.8);
@@ -224,7 +224,7 @@ export default function MusicPlayer({
     <>
       <audio ref={audioRef} src="/music/song1.mp3" preload="auto" loop />
 
-      {/* Floating Toggle Button */}
+      {/* Floating Toggle Button (Spinning Monochrome Vinyl/Cassette Disc when minimized) */}
       <button
         type="button"
         onClick={() => {
@@ -234,39 +234,40 @@ export default function MusicPlayer({
           }
         }}
         aria-expanded={isOpen}
-        aria-label={isOpen ? "Tutup pemutar musik" : "Buka pemutar musik"}
-        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-12 h-12 rounded-full mono-floating z-[999] flex items-center justify-center cursor-pointer transition-all duration-300 hover:border-[var(--border-strong)] active:scale-95 ${
-          isPlaying ? "border-[var(--accent-ink)] text-[var(--accent-ink)]" : "text-[var(--text-muted)]"
+        aria-label={isOpen ? "Kecilkan pemutar musik" : "Buka pemutar musik"}
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-13 h-13 rounded-full bg-[var(--bg-surface)] border shadow-[var(--shadow-floating)] z-[999] flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 ${
+          isPlaying ? "border-[var(--accent-ink)] text-[var(--accent-ink)]" : "border-[var(--border-hairline)] text-[var(--text-primary)]"
         }`}
       >
         <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
+          width="32"
+          height="32"
+          viewBox="0 0 36 36"
           fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-          strokeLinejoin="round"
           aria-hidden="true"
+          className={isPlaying ? "animate-[spin_4s_linear_infinite]" : ""}
         >
-          <path d="M9 18V5l12-2v13" />
-          <circle cx="6" cy="18" r="3" />
-          <circle cx="18" cy="16" r="3" />
+          {/* Outer vinyl / cassette disc */}
+          <circle cx="18" cy="18" r="15" stroke="currentColor" strokeWidth="1.5" />
+          <circle cx="18" cy="18" r="11" stroke="currentColor" strokeOpacity="0.35" strokeWidth="0.9" strokeDasharray="6 3" />
+          <circle cx="18" cy="18" r="7.5" stroke="currentColor" strokeOpacity="0.45" strokeWidth="0.9" />
+          {/* Center label & spindle */}
+          <circle cx="18" cy="18" r="4" fill="currentColor" fillOpacity="0.18" stroke="currentColor" strokeWidth="1.2" />
+          <circle cx="18" cy="18" r="1.4" fill="currentColor" />
         </svg>
       </button>
 
-      {/* Music Player Panel (Responsive: full-width above toggle on mobile, docked bottom-left on desktop) */}
+      {/* Music Player Panel (Solid surface so background text never bleeds through) */}
       <div
-        className={`fixed inset-x-4 bottom-20 sm:inset-x-auto sm:bottom-6 sm:left-6 sm:w-[340px] mono-floating rounded-[18px] p-4 z-[990] flex flex-col gap-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`fixed inset-x-4 bottom-20 sm:inset-x-auto sm:bottom-6 sm:left-6 sm:w-[340px] bg-[var(--bg-surface)] border border-[var(--border-hairline)] shadow-[var(--shadow-floating)] rounded-[18px] p-4 z-[990] flex flex-col gap-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isOpen
             ? "translate-y-0 opacity-100 pointer-events-auto"
             : "translate-y-4 opacity-0 pointer-events-none"
         }`}
       >
-        {/* Track Details + Lyrics Toggle */}
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-[10px] overflow-hidden border border-[var(--border-hairline)] shrink-0 bg-[var(--bg-elevated)]">
+        {/* Track Details + Lyrics Toggle + Minimize Button */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-10 h-10 rounded-[10px] overflow-hidden border border-[var(--border-hairline)] shrink-0 bg-[var(--bg-elevated)]">
             <img
               src={coverFallback ? "/assets/dummy/memory-1.svg" : "/assets/images/img1.jpeg"}
               alt="You and I — One Direction"
@@ -280,9 +281,9 @@ export default function MusicPlayer({
           </div>
           <canvas
             ref={canvasRef}
-            width={48}
-            height={22}
-            className="w-[48px] h-[22px] shrink-0 opacity-90"
+            width={40}
+            height={20}
+            className="w-[40px] h-[20px] shrink-0 opacity-90"
           />
           <button
             type="button"
@@ -295,6 +296,16 @@ export default function MusicPlayer({
             }`}
           >
             LIRIK
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            aria-label="Kecilkan ke tombol kaset"
+            className="w-7 h-7 rounded-full border border-[var(--border-hairline)] bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)] flex items-center justify-center cursor-pointer transition-colors shrink-0"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              <path d="M5 12h14" />
+            </svg>
           </button>
         </div>
 
