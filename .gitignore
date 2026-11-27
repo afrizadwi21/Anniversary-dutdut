@@ -43,6 +43,7 @@ next-env.d.ts
 # AI agent & Impeccable skills (keep local, do not push to GitHub)
 .agent/
 .agents/
+.impeccable/
 
 # Personal photos (keep local, hide from GitHub)
 public/assets/images/
