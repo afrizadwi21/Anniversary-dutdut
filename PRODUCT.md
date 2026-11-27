@@ -33,9 +33,9 @@ Unlike generic greeting templates, **buat dutdut** combines a real-time 3D persp
 
 1. **Immediate Arrival (`#hero`):** Visitor lands directly on the **buat dutdut** hero with a live countdown to June 9th and a direct invitation to explore or play music.
 2. **3D Memory Orbit (`#orbit`):** Visitor drags or tilts a 3D orbital plane of photo-planets revolving around a luminous star, clicking any planet to read its hidden memory note.
-3. **The Letter (`#letter`):** Visitor reads the three-paragraph personal message in a calm, distraction-free editorial column.
+3. **The Letter (`#letter`) & Open-When Capsules (`#open-when`):** Visitor reads the three-paragraph personal message, then unseals four numbered *Open When...* capsules (*lagi kangen*, *hari terasa berat*, *lagi berantem*, *pengen senyum*) for situational notes.
 4. **Milestones (`#timeline`) & Qualities (`#qualities`):** Visitor scrolls through key relationship chapters and six numbered reflections.
-5. **Photo Gallery (`#memories`) & Close (`#closing`):** Visitor views curated photography (with clean placeholder support for future swaps) and reaches the closing note while controlling playback in the floating music player.
+5. **Photo Gallery (`#memories`) & Synced Audio (`MusicPlayer`):** Visitor views curated photography and listens to `song1.mp3` with time-synced lyric/note cues and interactive seek-by-line.
 
 ## Capabilities and Constraints
 

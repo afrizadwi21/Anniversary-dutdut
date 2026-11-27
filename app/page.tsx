@@ -5,6 +5,7 @@ import MusicPlayer from "@/components/MusicPlayer";
 import CountdownTimer from "@/components/CountdownTimer";
 import TimelineMilestones from "@/components/TimelineMilestones";
 import LoveLoomOrbit from "@/components/LoveLoomOrbit";
+import OpenWhenLetters from "@/components/OpenWhenLetters";
 
 const CHERISHED_NOTES = [
   {
@@ -146,12 +147,15 @@ export default function Home() {
           </a>
 
           <div className="flex items-center gap-4 sm:gap-6">
-            <div className="hidden sm:flex items-center gap-6 font-mono text-xs uppercase tracking-[0.12em] text-[var(--text-muted)]">
+            <div className="hidden md:flex items-center gap-5 font-mono text-xs uppercase tracking-[0.12em] text-[var(--text-muted)]">
               <a href="#orbit" onClick={scrollToSection("orbit")} className="hover:text-[var(--text-primary)] transition-colors">
                 Orbit
               </a>
               <a href="#letter" onClick={scrollToSection("letter")} className="hover:text-[var(--text-primary)] transition-colors">
                 Surat
+              </a>
+              <a href="#open-when" onClick={scrollToSection("open-when")} className="hover:text-[var(--text-primary)] transition-colors">
+                Kapsul
               </a>
               <a href="#timeline" onClick={scrollToSection("timeline")} className="hover:text-[var(--text-primary)] transition-colors">
                 Jejak
@@ -271,6 +275,21 @@ export default function Home() {
                 — You and I
               </div>
             </article>
+          </div>
+        </section>
+
+        {/* ===== OPEN-WHEN CAPSULES SECTION ===== */}
+        <section id="open-when" className="py-20 md:py-28 px-4 sm:px-6 border-t border-[var(--border-hairline)]">
+          <div className="max-w-5xl mx-auto">
+            <div data-scroll-reveal className="scroll-reveal text-center mb-12">
+              <h2 className="font-display text-3xl sm:text-5xl text-[var(--text-primary)] mb-3">
+                Kapsul Waktu <em className="italic">Buat Dutdut</em>
+              </h2>
+              <p className="font-body text-sm text-[var(--text-muted)] max-w-md mx-auto">
+                Pilih dan buka salah satu amplop sesuai keadaanmu hari ini.
+              </p>
+            </div>
+            <OpenWhenLetters />
           </div>
         </section>
 

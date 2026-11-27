@@ -2,6 +2,25 @@
 
 import React, { useRef, useState, useEffect } from "react";
 
+interface SyncedCue {
+  time: number;
+  line: string;
+  note: string;
+}
+
+const SYNCED_CUES: SyncedCue[] = [
+  { time: 0, line: "Intro — You and I", note: "Tarik napas pelan, dengarkan melodi awalnya." },
+  { time: 14, line: "I figured it out from black and white...", note: "Dari awal yang sederhana sampai sejauh ini." },
+  { time: 30, line: "Seconds and hours, maybe they had to take some time", note: "Setiap proses pendewasaan kita berdua." },
+  { time: 48, line: "I know how it goes for someone like me...", note: "Terima kasih sudah selalu sabar." },
+  { time: 66, line: "You and I, we don't wanna be like them", note: "Kita punya cara kita sendiri." },
+  { time: 86, line: "We can make it 'til the end", note: "Sampai kapan pun, tetap bareng ya." },
+  { time: 112, line: "Nothing can come between you and I", note: "Bahkan badai sekalipun." },
+  { time: 142, line: "Not even the gods above can separate the two of us", note: "Selalu saling pilih satu sama lain." },
+  { time: 175, line: "Bridge — Every moment stays", note: "Setiap detik bersama kamu itu berharga." },
+  { time: 205, line: "You and I — Finale", note: "Terima kasih sudah jadi rumah ternyaman." },
+];
+
 export default function MusicPlayer({
   isAutoPlay = false,
   theme = "dark",
@@ -15,15 +34,28 @@ export default function MusicPlayer({
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const activeCueRef = useRef<HTMLButtonElement | null>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
+  const [showLyrics, setShowLyrics] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.8);
   const [coverFallback, setCoverFallback] = useState(false);
 
   const isLight = theme === "light";
+
+  // Determine active synced cue index
+  const activeCueIndex = SYNCED_CUES.reduce((acc, cue, idx) => {
+    return currentTime >= cue.time ? idx : acc;
+  }, 0);
+
+  useEffect(() => {
+    if (showLyrics && activeCueRef.current) {
+      activeCueRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [activeCueIndex, showLyrics]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -171,6 +203,16 @@ export default function MusicPlayer({
     setCurrentTime(newTime);
   };
 
+  const seekToTime = (time: number) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = time;
+    setCurrentTime(time);
+    if (!isPlaying) {
+      handlePlay();
+    }
+  };
+
   const formatTime = (time: number) => {
     if (isNaN(time)) return "00:00";
     const minutes = Math.floor(time / 60);
@@ -214,15 +256,15 @@ export default function MusicPlayer({
         </svg>
       </button>
 
-      {/* Music Player Panel */}
+      {/* Music Player Panel (Responsive: full-width above toggle on mobile, docked bottom-left on desktop) */}
       <div
-        className={`fixed bottom-4 left-4 sm:bottom-6 sm:left-6 w-[calc(100vw-5.5rem)] sm:w-[320px] mono-floating rounded-[18px] p-4 z-[990] flex flex-col gap-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`fixed inset-x-4 bottom-20 sm:inset-x-auto sm:bottom-6 sm:left-6 sm:w-[340px] mono-floating rounded-[18px] p-4 z-[990] flex flex-col gap-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isOpen
             ? "translate-y-0 opacity-100 pointer-events-auto"
             : "translate-y-4 opacity-0 pointer-events-none"
         }`}
       >
-        {/* Track Details */}
+        {/* Track Details + Lyrics Toggle */}
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-[10px] overflow-hidden border border-[var(--border-hairline)] shrink-0 bg-[var(--bg-elevated)]">
             <img
@@ -238,11 +280,55 @@ export default function MusicPlayer({
           </div>
           <canvas
             ref={canvasRef}
-            width={60}
-            height={24}
-            className="w-[60px] h-6 shrink-0 opacity-90"
+            width={48}
+            height={22}
+            className="w-[48px] h-[22px] shrink-0 opacity-90"
           />
+          <button
+            type="button"
+            onClick={() => setShowLyrics((s) => !s)}
+            aria-expanded={showLyrics}
+            className={`px-2.5 py-1 rounded-full border font-mono text-xs tracking-wider cursor-pointer transition-colors ${
+              showLyrics
+                ? "bg-[var(--accent-ink)] text-[var(--accent-contrast)] border-[var(--accent-ink)]"
+                : "bg-[var(--bg-elevated)] text-[var(--text-muted)] border-[var(--border-hairline)] hover:text-[var(--text-primary)]"
+            }`}
+          >
+            LIRIK
+          </button>
         </div>
+
+        {/* Synced Lyrics & Notes Drawer */}
+        {showLyrics && (
+          <div
+            aria-label="Lirik dan catatan sinkron"
+            className="max-h-32 overflow-y-auto border-y border-[var(--border-hairline)] py-2 space-y-1.5 pr-1"
+          >
+            {SYNCED_CUES.map((cue, idx) => {
+              const isActive = idx === activeCueIndex;
+              return (
+                <button
+                  key={cue.time}
+                  ref={isActive ? activeCueRef : null}
+                  type="button"
+                  onClick={() => seekToTime(cue.time)}
+                  className={`w-full text-left px-2 py-1.5 rounded-[8px] transition-all cursor-pointer block ${
+                    isActive
+                      ? "bg-[var(--bg-elevated)] text-[var(--text-primary)]"
+                      : "text-[var(--text-muted)] opacity-60 hover:opacity-95"
+                  }`}
+                >
+                  <p className={`font-display italic text-sm leading-snug ${isActive ? "text-[var(--text-primary)]" : ""}`}>
+                    {cue.line}
+                  </p>
+                  <p className="font-body text-xs text-[var(--text-muted)] mt-0.5">
+                    {cue.note}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* Timeline Progress Bar */}
         <div className="flex flex-col gap-1">
