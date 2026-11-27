@@ -6,8 +6,13 @@ const TRAIL_PETALS = ["🌸", "✨", "🌺", "💖", "🌷", "🌹", "✦", "✧
 
 export default function CursorTrail() {
   useEffect(() => {
-    // Disable on mobile/touch screens
-    if (window.matchMedia("(hover: none)").matches) return;
+    // Disable on mobile/touch screens or when user prefers reduced motion
+    if (
+      window.matchMedia("(hover: none)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
 
     let lastTrail = 0;
 

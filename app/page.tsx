@@ -63,6 +63,7 @@ export default function Home() {
   const [isOpened, setIsOpened] = useState(false);
   const [playMusic, setPlayMusic] = useState(false);
   const [theme, setTheme] = useState<"dark" | "pink">("pink");
+  const [activeFlowerIndex, setActiveFlowerIndex] = useState<number | null>(null);
 
   // Apply theme to document element
   useEffect(() => {
@@ -114,10 +115,28 @@ export default function Home() {
       {/* Theme Toggle Button */}
       {isOpened && (
         <button
+          type="button"
           onClick={toggleTheme}
-          className="fixed top-6 right-6 z-[1900] px-4 py-2 rounded-full glass border border-[#ff96b4]/30 text-xs font-body tracking-wider text-[#ff96b4] hover:text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(255,150,180,0.25)] flex items-center gap-2 cursor-pointer"
+          aria-label={theme === "dark" ? "Switch to Sweet Pink theme" : "Switch to Romantic Dark theme"}
+          aria-pressed={theme === "pink"}
+          className="fixed top-4 right-4 sm:top-6 sm:right-6 z-[1900] px-4 py-2 rounded-full glass border border-[var(--surface-card-border)] text-xs font-body tracking-wider text-[var(--accent-primary)] hover:text-[var(--text-primary)] transition-all duration-300 hover:-translate-y-0.5 active:scale-95 shadow-[0_8px_24px_rgba(0,0,0,0.16)] flex items-center gap-2 cursor-pointer"
         >
-          {theme === "dark" ? "🌸 Sweet Pink" : "🍷 Romantic Dark"}
+          {theme === "dark" ? (
+            <>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+              </svg>
+              <span>Sweet Pink</span>
+            </>
+          ) : (
+            <>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+              </svg>
+              <span>Romantic Dark</span>
+            </>
+          )}
         </button>
       )}
       {/* Intro Scene / Unopened state */}
@@ -137,18 +156,17 @@ export default function Home() {
       )}
 
       {/* Main Website Surprises */}
-      <div id="main-site" className={`${isOpened ? "entering block" : "hidden"}`}>
+      <main id="main-site" className={`${isOpened ? "entering block" : "hidden"}`}>
 
         {/* ===== HERO SECTION ===== */}
         <section id="hero" className="flex items-center justify-center min-h-screen text-center">
           <div className="hero-content w-full">
-            <p className="hero-eyebrow">Jaja & Dutdut</p>
             <h1 className="hero-title">
               <span className="line1 font-display">Happy Anniversary,</span>
               <span className="line2 italic font-display">Dutdut</span>
             </h1>
             <p className="hero-sub">
-              Hari demi hari kita lalui bersama, dan setiap detiknya adalah bagian terindah dalam hidup akuu cayangg.
+              Jaja &amp; Dutdut — Hari demi hari kita lalui bersama, dan setiap detiknya adalah bagian terindah dalam hidup akuu cayangg.
             </p>
 
             <CountdownTimer />
@@ -178,12 +196,7 @@ export default function Home() {
         <section id="message" className="relative">
           <div className="section-inner">
             <InteractiveCard maxRotateX={5} maxRotateY={5} scale={1.01}>
-              <div className="message-card glass">
-                <div className="card-flowers-top">
-                  <span className="inline-flower">🌸</span>
-                  <span className="inline-flower delay1">🌺</span>
-                  <span className="inline-flower delay2">🌸</span>
-                </div>
+              <div className="message-card surface-tonal">
                 <p className="msg-label">Dibacaaaa, awas aja kalo ga dibaca, tau ko lebay</p>
                 <h2 className="msg-title">
                   Menapaki Setiap Detik<br />
@@ -216,7 +229,6 @@ export default function Home() {
         {/* ===== LOVELOOM ORBIT SECTION ===== */}
         <section id="loveloom" className="relative">
           <div className="section-inner">
-            <p className="section-eyebrow">galaxy of us</p>
             <h2 className="section-title">
               Pusat Gravitasi<br />
               <em>Semesta Cintaku</em>
@@ -228,7 +240,6 @@ export default function Home() {
         {/* ===== TIMELINE SECTION ===== */}
         <section id="timeline" className="relative">
           <div className="section-inner">
-            <p className="section-eyebrow">kisah kita</p>
             <h2 className="section-title">
               Perjalanan Indah<br />
               <em>Yang Kita Lewati Bersama</em>
@@ -240,26 +251,28 @@ export default function Home() {
         {/* ===== REASONS SECTION ===== */}
         <section id="reasons">
           <div className="section-inner">
-            <p className="section-eyebrow">a thousand sweet memories</p>
             <h2 className="section-title">What I Cherish About Us</h2>
 
-            <div className="reasons-grid">
+            <ol className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 max-w-4xl mx-auto mt-10 text-left list-none p-0">
               {CELEBRATE_CARDS.map((card, i) => (
-                <InteractiveCard
+                <li
                   key={i}
-                  maxRotateX={8}
-                  maxRotateY={8}
-                  scale={1.03}
-                  className={`reveal-card ${card.delayClass}`}
+                  className={`reveal-card ${card.delayClass} pt-5 border-t border-[var(--surface-card-border)] flex flex-col gap-2`}
                 >
-                  <div className="reason-card glass min-h-[250px]">
-                    <div className="reason-icon">{card.icon}</div>
-                    <h3>{card.title}</h3>
-                    <p>{card.text}</p>
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-display italic text-lg text-[var(--accent-primary)]">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <h3 className="font-display text-2xl font-normal text-[var(--text-primary)]">
+                      {card.title}
+                    </h3>
                   </div>
-                </InteractiveCard>
+                  <p className="font-body text-sm font-light leading-relaxed text-[var(--text-secondary)] pl-8">
+                    {card.text}
+                  </p>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
         </section>
 
@@ -267,62 +280,64 @@ export default function Home() {
         <section id="garden">
           <div className="garden-bg" />
           <div className="section-inner">
-            <p className="section-eyebrow">our anniversary garden</p>
             <h2 className="section-title garden-title">
               A Garden Blooming<br />
               <em>For Our Love Today</em>
             </h2>
 
             <div className="flower-garden">
-              {GARDEN_FLOWERS.map((flower, i) => (
-                <div key={i} className={`garden-flower ${flower.class}`}>
-                  <div className="gf-bloom">{flower.emoji}</div>
-                  <div className="gf-stem" />
-                  <div className="gf-tooltip glass">
-                    <strong>{flower.name}</strong>
-                    <span>{flower.wish}</span>
-                  </div>
-                </div>
-              ))}
+              {GARDEN_FLOWERS.map((flower, i) => {
+                const isActive = activeFlowerIndex === i;
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setActiveFlowerIndex(isActive ? null : i)}
+                    aria-label={`${flower.name}: ${flower.wish}`}
+                    aria-expanded={isActive}
+                    className={`garden-flower ${flower.class} ${isActive ? "is-active" : ""} bg-transparent border-0 p-0 cursor-pointer`}
+                  >
+                    <div className="gf-bloom" aria-hidden="true">{flower.emoji}</div>
+                    <div className="gf-stem" aria-hidden="true" />
+                    <div className="gf-tooltip glass">
+                      <strong>{flower.name}</strong>
+                      <span>{flower.wish}</span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
-            <p className="garden-note">💖 hover each flower — an anniversary wish is hiding inside ✨</p>
+            <p className="garden-note">💖 hover or tap each flower — an anniversary wish is hiding inside ✨</p>
           </div>
         </section>
 
         {/* ===== MEMORIES SECTION ===== */}
         <section id="memories">
           <div className="section-inner">
-            {/* Git conflict markers displayed literally to replicate site exactly */}
-            {`<<<<<<< HEAD`}
-            <p className="section-eyebrow">captured in time</p>
-            {`=======`}
-            <p className="section-eyebrow">celebrating us</p>
-            {`>>>>>>> eef0d1c (update)`}
-
             <h2 className="section-title">
               Our Beautiful<br />
               <em>Pictures</em>
             </h2>
 
             <div className="gallery-grid">
-              <InteractiveCard className="gallery-card glass gc1" maxRotateX={4} maxRotateY={4}>
-                <img src="/assets/images/img1.jpeg" className="gallery-img w-full object-cover aspect-square" alt="Photo 1" />
+              <InteractiveCard className="gallery-card surface-tonal gc1" maxRotateX={4} maxRotateY={4}>
+                <img src="/assets/images/img1.jpeg" className="gallery-img w-full object-cover aspect-square" alt="Jaja and Dutdut — our" />
                 <div className="gallery-caption">our</div>
               </InteractiveCard>
 
-              <InteractiveCard className="gallery-card glass gc2" maxRotateX={4} maxRotateY={4}>
-                <img src="/assets/images/img2.jpeg" className="gallery-img w-full object-cover aspect-square" alt="Photo 2" />
+              <InteractiveCard className="gallery-card surface-tonal gc2" maxRotateX={4} maxRotateY={4}>
+                <img src="/assets/images/img2.jpeg" className="gallery-img w-full object-cover aspect-square" alt="Jaja and Dutdut — beautiful" />
                 <div className="gallery-caption">beautiful</div>
               </InteractiveCard>
 
-              <InteractiveCard className="gallery-card glass gc3" maxRotateX={4} maxRotateY={4}>
-                <img src="/assets/images/img3.jpeg" className="gallery-img w-full object-cover aspect-square" alt="Photo 3" />
+              <InteractiveCard className="gallery-card surface-tonal gc3" maxRotateX={4} maxRotateY={4}>
+                <img src="/assets/images/img3.jpeg" className="gallery-img w-full object-cover aspect-square" alt="Jaja and Dutdut — journey" />
                 <div className="gallery-caption">journey</div>
               </InteractiveCard>
 
-              <InteractiveCard className="gallery-card glass gc4" maxRotateX={4} maxRotateY={4}>
-                <img src="/assets/images/img4.jpeg" className="gallery-img w-full object-cover aspect-square" alt="Photo 4" />
+              <InteractiveCard className="gallery-card surface-tonal gc4" maxRotateX={4} maxRotateY={4}>
+                <img src="/assets/images/img4.jpeg" className="gallery-img w-full object-cover aspect-square" alt="Jaja and Dutdut — together" />
                 <div className="gallery-caption">together</div>
               </InteractiveCard>
             </div>
@@ -337,16 +352,6 @@ export default function Home() {
           </div>
 
           <div className="finale-inner">
-            <div className="finale-flowers">
-              <span className="ff">🌸</span>
-              <span className="ff delay1">🌺</span>
-              <span className="ff delay2">🌹</span>
-              <span className="ff delay3">🌸</span>
-              <span className="ff delay4">🌷</span>
-            </div>
-
-            <p className="finale-eyebrow">happy anniversary, my love 💖</p>
-
             <h2 className="finale-title">
               Dutdut Balaga,<br />
               <em>Jaja Baik</em>
@@ -366,7 +371,7 @@ export default function Home() {
 
         {/* ===== FOOTER ===== */}
 
-      </div>
+      </main>
     </div>
   );
 }

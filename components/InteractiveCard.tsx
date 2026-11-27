@@ -26,6 +26,7 @@ export default function InteractiveCard({
   const requestRef = useRef<number | null>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const card = cardRef.current;
     if (!card) return;
 

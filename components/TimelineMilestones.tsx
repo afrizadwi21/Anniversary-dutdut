@@ -59,24 +59,21 @@ export default function TimelineMilestones() {
                 className={`w-full md:w-[45%] transition-all duration-700 reveal-card delay${index}`}
               >
                 <InteractiveCard maxRotateX={6} maxRotateY={6} scale={1.02}>
-                  <div className="glass p-6 text-left relative overflow-hidden group hover:border-[#ff96b4]/30 transition-all duration-300">
-                    {/* Glowing highlight inside card */}
-                    <div className="absolute -right-12 -top-12 w-24 h-24 bg-[#ff96b4]/5 rounded-full blur-xl group-hover:bg-[#ff96b4]/10 transition-colors duration-500" />
-
+                  <div className="surface-tonal p-6 text-left relative overflow-hidden group hover:border-[var(--accent-primary)] transition-all duration-300">
                     {/* Header */}
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="font-body text-xs uppercase tracking-[0.15em] text-[#ffc8dc]/75 font-light">
+                      <span className="font-body text-xs uppercase tracking-[0.15em] text-[var(--text-secondary)] font-light">
                         {item.date}
                       </span>
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-display text-xl text-[#fff8f3] font-light mb-2 group-hover:text-[#ff96b4] transition-colors duration-300">
+                    <h3 className="font-display text-xl text-[var(--text-primary)] font-light mb-2 group-hover:text-[var(--accent-primary)] transition-colors duration-300">
                       {item.title}
                     </h3>
 
                     {/* Description */}
-                    <p className="font-body text-[#ffc8dc]/75 text-sm font-light leading-relaxed">
+                    <p className="font-body text-[var(--text-secondary)] text-sm font-light leading-relaxed">
                       {item.desc}
                     </p>
                   </div>

@@ -169,10 +169,12 @@ export default function GiftBox({ onOpen }: GiftBoxProps) {
       }`}
     >
       <div id="gift-wrapper" className="relative z-10 flex flex-col items-center">
-        <div
+        <button
+          type="button"
           id="gift-container"
           onClick={handleOpen}
-          className="cursor-pointer flex flex-col items-center gap-5 transition-transform duration-300 hover:scale-105 group"
+          aria-label="Open your anniversary gift box"
+          className="cursor-pointer flex flex-col items-center gap-5 transition-transform duration-300 hover:scale-105 group bg-transparent border-0 p-4 rounded-2xl"
         >
           <div
             id="gift-box"
@@ -199,11 +201,11 @@ export default function GiftBox({ onOpen }: GiftBoxProps) {
             </div>
           </div>
           {!isOpened && (
-            <p className="gift-hint text-[#ffc8dc]/75 font-light text-[0.85rem] tracking-[0.12em] text-center animate-pulse-hint">
+            <p className="gift-hint text-[#ffc8dc]/75 font-light text-sm tracking-[0.12em] text-center animate-pulse-hint">
               🎂 tap to open your gift ✨
             </p>
           )}
-        </div>
+        </button>
 
         {/* Flower burst container */}
         <div id="bloom-container" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">

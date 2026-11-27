@@ -253,6 +253,7 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
 
       {/* Floating Toggle Button (Bottom Right) */}
       <button
+        type="button"
         onClick={() => {
           setIsOpen(!isOpen);
           // Resume audio context if it was suspended on user gesture
@@ -260,18 +261,32 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
             audioContextRef.current.resume();
           }
         }}
-        className={`fixed bottom-6 right-6 w-14 h-14 rounded-full glass z-[999] flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 shadow-[0_0_20px_rgba(255,150,180,0.3)] ${isPlaying ? "border-[#ff96b4] border" : "border-white/20 border"
+        aria-expanded={isOpen}
+        aria-label={isOpen ? "Close Music Player" : "Open Music Player"}
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14 rounded-full glass z-[999] flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_8px_24px_rgba(0,0,0,0.25)] text-[var(--accent-primary)] ${isPlaying ? "border-[var(--accent-primary)] border" : "border-white/20 border"
           }`}
-        aria-label="Toggle Music Player"
       >
-        <span className={`text-2xl transition-transform duration-[4s] linear infinite ${isPlaying ? "animate-[spin_4s_linear_infinite] filter drop-shadow-[0_0_8px_rgba(255,150,180,0.8)]" : ""}`}>
-          🌸
-        </span>
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          className={isPlaying ? "animate-[spin_6s_linear_infinite]" : ""}
+        >
+          <path d="M9 18V5l12-2v13" />
+          <circle cx="6" cy="18" r="3" />
+          <circle cx="18" cy="16" r="3" />
+        </svg>
       </button>
 
       {/* Main Music Player Panel (Slides from Left) */}
       <div
-        className={`fixed bottom-6 left-6 w-[320px] glass p-4 z-[990] flex flex-col gap-3 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen
+        className={`fixed bottom-4 left-4 sm:bottom-6 sm:left-6 w-[calc(100vw-6.5rem)] sm:w-[320px] glass p-4 z-[990] flex flex-col gap-3 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen
           ? "translate-x-0 opacity-100 pointer-events-auto"
           : "-translate-x-10 opacity-0 pointer-events-none"
           }`}
@@ -306,9 +321,10 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
             max={duration || 100}
             value={currentTime}
             onChange={handleSeek}
+            aria-label="Seek audio timeline"
             className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#ff96b4] hover:accent-[#ffc8dc]"
           />
-          <div className="flex justify-between text-[10px] text-[#ffc8dc]/60 font-light mt-0.5">
+          <div className="flex justify-between text-xs text-[#ffc8dc]/60 font-light mt-0.5">
             <span>{formatTime(currentTime)}</span>
             <span>{formatTime(duration)}</span>
           </div>
@@ -319,19 +335,33 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
           {/* Left: Playback toggles */}
           <div className="flex items-center gap-4">
             <button
+              type="button"
               onClick={togglePlay}
+              aria-label={isPlaying ? "Pause music" : "Play music"}
               className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
             >
-              {isPlaying ? "❚❚" : "▶"}
+              {isPlaying ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <rect x="6" y="5" width="4" height="14" rx="1" />
+                  <rect x="14" y="5" width="4" height="14" rx="1" />
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <polygon points="7 4 20 12 7 20 7 4" />
+                </svg>
+              )}
             </button>
             <span className="text-xs text-white/80 select-none">
-              {isPlaying ? "Playing Surenade..." : "Paused"}
+              {isPlaying ? "Playing Serenade..." : "Paused"}
             </span>
           </div>
 
           {/* Right: Volume control slider */}
           <div className="flex items-center gap-2 max-w-[90px]">
-            <span className="text-[10px] text-[#ffc8dc]/75">🔊</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--text-secondary)] shrink-0" aria-hidden="true">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+            </svg>
             <input
               type="range"
               min={0}
@@ -339,6 +369,7 @@ export default function MusicPlayer({ isAutoPlay = false }: { isAutoPlay?: boole
               step={0.05}
               value={volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
+              aria-label="Audio volume"
               className="w-16 h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#ff96b4]"
             />
           </div>

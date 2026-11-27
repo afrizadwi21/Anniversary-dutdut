@@ -1,20 +1,73 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0e0208;
-  --foreground: #ffffff;
-  
+  --background: #180410;
+  --foreground: #fff8f3;
+
+  /* Semantic Design System Tokens (Romantic Dark default) */
+  --text-primary: rgba(255, 240, 245, 0.98);
+  --text-secondary: rgba(255, 200, 220, 0.82);
+  --text-muted: rgba(255, 190, 210, 0.68);
+  --accent-primary: #ff96b4;
+  --accent-ring: #ff96b4;
+  --surface-card: rgba(255, 255, 255, 0.055);
+  --surface-card-border: rgba(244, 114, 182, 0.28);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
   /* Map original site font variables to Next.js local fonts */
   --ff-display: var(--font-cormorant), serif;
   --ff-script: var(--font-cormorant), serif;
   --ff-body: var(--font-raleway), sans-serif;
 }
 
+[data-theme="pink"] {
+  --background: #ffeef2;
+  --foreground: #4a0e17;
+
+  /* Semantic Design System Tokens (Sweet Pink) */
+  --text-primary: #4a0e17;
+  --text-secondary: #7c243c;
+  --text-muted: #8f334c;
+  --accent-primary: #d9406b;
+  --accent-ring: #d9406b;
+  --surface-card: rgba(255, 255, 255, 0.82);
+  --surface-card-border: rgba(217, 64, 107, 0.32);
+}
+
 body {
   font-family: var(--ff-body);
   background: var(--background);
-  color: var(--foreground);
+  color: var(--text-primary);
   overflow-x: hidden;
+}
+
+.surface-tonal {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-card-border);
+  border-radius: 24px;
+  box-shadow: var(--glass-shadow);
+  transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s var(--ease-out-expo);
+}
+
+/* Accessible focus indicators */
+:focus-visible {
+  outline: 2px solid var(--accent-ring);
+  outline-offset: 2px;
+}
+
+/* Comfortable reading measure for long-form letter & finale copy */
+.msg-body,
+.finale-body {
+  max-width: 65ch;
+  margin-inline: auto;
+}
+
+/* Support tap/focus reveal on touch & keyboard devices for garden flowers */
+.garden-flower.is-active .gf-tooltip,
+.garden-flower:focus-within .gf-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-6px);
+  pointer-events: auto;
 }
 
 /* Ensure elegant italic styling for Cormorant Garamond elements playing the script/accent role */
@@ -66,32 +119,51 @@ em {
   animation-play-state: paused;
 }
 
-@keyframes bounce-slow-anim {
+@keyframes float-gentle-anim {
   0%, 100% {
     transform: translateY(0) scale(1);
   }
   50% {
-    transform: translateY(-4px) scale(1.05);
+    transform: translateY(-4px) scale(1.03);
   }
 }
 
-.animate-bounce-slow {
-  animation: bounce-slow-anim 3s ease-in-out infinite;
+.animate-float-gentle {
+  animation: float-gentle-anim 3.5s ease-in-out infinite;
 }
 
 @keyframes scale-up-anim {
   from {
-    transform: scale(0.9) opacity(0);
+    transform: scale(0.95);
+    opacity: 0;
   }
   to {
-    transform: scale(1) opacity(1);
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
 .animate-scale-up {
-  animation: scale-up-anim 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: scale-up-anim 0.35s var(--ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)) forwards;
 }
 
 .animate-spin-slow {
   animation: orbit-anim 25s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-orbit,
+  .animate-counter-orbit,
+  .animate-float-gentle,
+  .animate-spin-slow,
+  .animate-pulse,
+  .animate-ping {
+    animation: none !important;
+  }
+
+  .reveal-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }

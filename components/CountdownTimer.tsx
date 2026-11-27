@@ -68,11 +68,11 @@ export default function CountdownTimer() {
       </p>
 
       {timeLeft.isAnniversaryDay ? (
-        <div className="glass px-8 py-6 text-center animate-pulse border border-[#ff96b4]/30 shadow-[0_0_30px_rgba(255,150,180,0.25)]">
-          <h3 className="font-display italic text-3xl md:text-4xl text-[#fff8f3] font-light leading-relaxed">
+        <div className="surface-tonal px-8 py-6 text-center">
+          <h3 className="font-display italic text-3xl md:text-4xl text-[var(--text-primary)] font-light leading-relaxed">
             Happy Anniversary, My Love! 💖
           </h3>
-          <p className="font-body text-[#ffc8dc]/80 text-sm font-light mt-2 tracking-wide">
+          <p className="font-body text-[var(--text-secondary)] text-sm font-light mt-2 tracking-wide">
             Hari ini adalah milik kita. Selamat merayakan cinta kita yang indah sayangggg.
           </p>
         </div>
@@ -86,15 +86,12 @@ export default function CountdownTimer() {
           ].map((item, index) => (
             <div
               key={index}
-              className="glass flex flex-col items-center justify-center py-4 md:py-6 relative overflow-hidden group hover:border-[#ff96b4]/40 hover:shadow-[0_0_25px_rgba(255,150,180,0.2)] transition-all duration-500"
+              className="surface-tonal flex flex-col items-center justify-center py-4 md:py-6 relative overflow-hidden group hover:border-[var(--accent-primary)] transition-all duration-500"
             >
-              {/* Subtle top reflection */}
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-white/20" />
-
-              <span className="font-display text-3xl md:text-5xl font-light text-[#fff8f3] tracking-normal drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+              <span className="font-display text-3xl md:text-5xl font-light text-[var(--text-primary)] tracking-normal">
                 {String(item.value).padStart(2, "0")}
               </span>
-              <span className="font-body text-[10px] md:text-xs uppercase tracking-[0.15em] text-[#ffc8dc]/70 mt-1 font-light">
+              <span className="font-body text-xs uppercase tracking-[0.15em] text-[var(--text-secondary)] mt-1 font-light">
                 {item.label}
               </span>
             </div>
