@@ -257,9 +257,10 @@ export default function MusicPlayer({
         </svg>
       </button>
 
-      {/* Music Player Panel (Solid surface so background text never bleeds through) */}
+      {/* Music Player Panel (100% solid surface so background text never bleeds through) */}
       <div
-        className={`fixed inset-x-4 bottom-20 sm:inset-x-auto sm:bottom-6 sm:left-6 sm:w-[340px] bg-[var(--bg-surface)] border border-[var(--border-hairline)] shadow-[var(--shadow-floating)] rounded-[18px] p-4 z-[990] flex flex-col gap-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        style={{ backgroundColor: isLight ? "#ffffff" : "#141417" }}
+        className={`fixed inset-x-4 bottom-20 sm:inset-x-auto sm:bottom-6 sm:left-6 sm:w-[340px] border border-[var(--border-hairline)] shadow-[var(--shadow-floating)] rounded-[18px] p-4 z-[990] flex flex-col gap-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isOpen
             ? "translate-y-0 opacity-100 pointer-events-auto"
             : "translate-y-4 opacity-0 pointer-events-none"

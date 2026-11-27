@@ -125,7 +125,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[var(--bg-canvas)] text-[var(--text-primary)] pb-28 transition-colors duration-300">
+    <div className="relative min-h-screen bg-[var(--bg-canvas)] text-[var(--text-primary)] pb-40 sm:pb-32 transition-colors duration-300">
       {/* Hairline Scroll Progress Bar */}
       <div
         ref={progressBarRef}
