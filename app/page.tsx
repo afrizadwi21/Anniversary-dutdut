@@ -95,14 +95,16 @@ export default function Home() {
           if (entry.isIntersecting) {
             el.classList.add("is-visible");
           } else {
-            // Set direction so re-entering from above or below glides naturally
             const rect = entry.boundingClientRect;
-            el.setAttribute("data-scroll-dir", rect.top < 0 ? "up" : scrollDir);
-            el.classList.remove("is-visible");
+            // Only reset when completely outside the viewport to prevent edge oscillation/jitter
+            if (rect.bottom <= 0 || rect.top >= window.innerHeight) {
+              el.setAttribute("data-scroll-dir", rect.top < 0 ? "up" : scrollDir);
+              el.classList.remove("is-visible");
+            }
           }
         });
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.05 }
     );
 
     elements.forEach((el) => observer.observe(el));
