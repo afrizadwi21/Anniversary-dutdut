@@ -44,6 +44,3 @@ next-env.d.ts
 .agent/
 .agents/
 .impeccable/
-
-# Personal photos (keep local, hide from GitHub)
-public/assets/images/
